@@ -4,7 +4,7 @@
 Major design decision accross synchonising functions in the sorterImplementation. I 
 
 ## Compile and run instructions for linux (use linux instructions)
-
+javac GETClient.java ContentServer.java AggregationServer.java
 
 ## Testing instructions
 
