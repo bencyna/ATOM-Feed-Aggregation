@@ -15,7 +15,6 @@ public class AggregationServer {
             dout.writeUTF(sendToClient());  
             dout.flush();  
 
-            din.close();  
         } catch (Exception e) {
             System.out.println(e);
         }
