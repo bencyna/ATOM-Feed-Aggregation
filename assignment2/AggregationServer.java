@@ -11,13 +11,11 @@ public class AggregationServer {
               
             String str="";  
             str=din.readUTF();  
-            System.out.println("client says: "+str);  
+            System.out.println("sever: "+str);  
             dout.writeUTF(sendToClient());  
             dout.flush();  
 
             din.close();  
-            s.close();  
-            ss.close();  
         } catch (Exception e) {
             System.out.println(e);
         }
