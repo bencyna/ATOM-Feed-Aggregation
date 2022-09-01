@@ -10,9 +10,15 @@ public class AggregationServer {
                 DataInputStream din=new DataInputStream(s.getInputStream());  
                 DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
                 
-                String str="";  
-                str=din.readUTF();  
-                System.out.println("sever: "+str);  
+                String putContent="";  
+                putContent=din.readUTF();  
+                String[] parts = putContent.split("<!endline!>;");
+                PrintWriter writer = new PrintWriter("./saved/content server 1.txt", "UTF-8");
+                for (int i = 0; i < parts.length; i++) {
+                    writer.println(parts[i]);
+                }
+                writer.close();
+                
                 dout.writeUTF(sendToClient());  
                 dout.flush();  
                 ss.close();
@@ -22,6 +28,6 @@ public class AggregationServer {
         }
     }
     static String sendToClient() {
-        return "stromng";
+        return "success?";
     }
 }

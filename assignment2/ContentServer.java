@@ -3,6 +3,8 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,7 +33,7 @@ public class ContentServer {
     }
 
     static String put(String filepath) {
-        String content = "";
+        String content = "Location: content server 1 <!endline!>;";
         try {
             FileInputStream fstream = new FileInputStream(filepath);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
@@ -39,8 +41,8 @@ public class ContentServer {
 
             //Read File Line By Line
             while ((strLine = br.readLine()) != null)   {
-              // Print the content on the console
-              content += strLine;
+              // if current line doesn't have an identifyer, we remove the last endline then add this line
+              content += strLine + "<!endline!>;";
             }
             fstream.close();
             return content;
