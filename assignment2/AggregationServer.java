@@ -5,7 +5,7 @@ public class AggregationServer {
     public static void main(String[] args) {
         try {
             while (true) {
-                ServerSocket ss = new ServerSocket(6666);
+                ServerSocket ss = new ServerSocket(4567 );
                 Socket s=ss.accept();  
                 DataInputStream din=new DataInputStream(s.getInputStream());  
                 DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
