@@ -9,7 +9,7 @@ public class GETClient {
             DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
 
             String str2="";  
-            dout.writeUTF(lamport());  
+            dout.writeUTF("client server");  
             dout.flush();  
             str2=din.readUTF();  
             System.out.println("Server says: "+str2);  
