@@ -30,7 +30,7 @@ public class AggregationServer {
         }
     }
     static String sendToClient() {
-        // read files and return contents in string format
+        // read file and return contents in string format
         try {
             String content = "";
 
