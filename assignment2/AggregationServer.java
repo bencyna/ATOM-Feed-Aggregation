@@ -4,8 +4,12 @@ import java.net.*;
 public class AggregationServer {
     public static void main(String[] args) {
         try {
+            Integer server = 4567;
+            if (args.length >= 1) {
+                server = Integer.parseInt(args[0]);
+            }
             while (true) {
-                ServerSocket ss = new ServerSocket(4567);
+                ServerSocket ss = new ServerSocket(server);
                 Socket s=ss.accept();  
                 DataInputStream din=new DataInputStream(s.getInputStream());  
                 DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
