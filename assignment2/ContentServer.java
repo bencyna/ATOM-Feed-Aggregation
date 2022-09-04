@@ -9,11 +9,16 @@ import java.net.*;
 public class ContentServer {
     public static void main(String[] args) {
         try {
-            System.out.print(args[0]);
-            Socket s = new Socket("localhost", 4567 );
+            if (args.length < 2) {
+                System.out.println("Error, format for connection and file to upload incorrect, please use this format: <ServerName>:<PortNumber> <filepath>");
+                return;
+            }
+            Integer port = Integer.parseInt(args[0].split(":")[1]);
+
+            Socket s = new Socket("localhost", port);
             DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
 
-            dout.writeUTF(put("./input/file1.txt"));  
+            dout.writeUTF(put(args[1]));  
             dout.flush();  
 
             dout.close();  
