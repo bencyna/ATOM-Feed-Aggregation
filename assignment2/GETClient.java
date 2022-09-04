@@ -6,9 +6,10 @@ public class GETClient {
     /**
      * @param attempts
      */
-    static void connect(Integer attempts) {
+    static void connect(Integer attempts, String server) {
         try {
-            Socket s = new Socket("localhost", 4567);
+            Integer port = Integer.parseInt(server.split(":")[1]);
+            Socket s = new Socket("localhost", port);
             DataInputStream din = new DataInputStream(s.getInputStream());
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
@@ -30,7 +31,7 @@ public class GETClient {
                 catch(Exception err) {
                     System.out.println(e);
                 }
-                connect(attempts + 1);
+                connect(attempts + 1, server);
             } else {
                 System.out.println("Connection failed, unable to get content.");
             }
@@ -38,7 +39,11 @@ public class GETClient {
     }
 
     public static void main(String[] args) {
-        connect(0);
+        String server = "AggregationServer:4567";
+        if (args.length >= 1) {
+            server = args[0];
+        }
+        connect(0, server);
     }
 
     static String lamport() {
