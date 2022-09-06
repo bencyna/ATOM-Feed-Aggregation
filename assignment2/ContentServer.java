@@ -22,6 +22,9 @@ public class ContentServer {
             dout.flush();  
 
             dout.close();  
+
+            // every 5 seconds, tell aggregation server this content server is alive
+
             s.close();  
             
         } catch (Exception e) {
