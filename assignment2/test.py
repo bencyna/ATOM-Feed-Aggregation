@@ -22,11 +22,11 @@ def basics():
                     break
 
                 if len(str(output_contents).strip()) > 0:
-                    if output_contents[expectedOutputLineNum] == input_contents:
-                        print(f"test {expectedOutputLineNum}: \"{line}\" passed")
+                    if output_contents[expectedOutputLineNum].strip() == line.strip():
+                        print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
                         passCount += 1
                     else:
-                        print(f"test {expectedOutputLineNum}: \"{line}\" failed")
+                        print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
                         failCount +=1
                 
                     expectedOutputLineNum += 1

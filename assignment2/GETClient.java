@@ -20,7 +20,7 @@ public class GETClient {
             serverContent = din.readUTF();
             System.out.println("Server says: " + serverContent);
             PrintWriter writer = new PrintWriter("client_output.txt", "UTF-8");
-            writer.println(serverContent);
+            writer.print(serverContent);
             writer.close();
 
             dout.close();
