@@ -1,4 +1,5 @@
 import java.io.DataOutputStream;
+import java.io.PrintWriter;
 import java.io.DataInputStream;
 import java.net.*;
 
@@ -13,11 +14,14 @@ public class GETClient {
             DataInputStream din = new DataInputStream(s.getInputStream());
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
-            String str2 = "";
+            String serverContent = "";
             dout.writeUTF("client server");
             dout.flush();
-            str2 = din.readUTF();
-            System.out.println("Server says: " + str2);
+            serverContent = din.readUTF();
+            System.out.println("Server says: " + serverContent);
+            PrintWriter writer = new PrintWriter("client_output.txt", "UTF-8");
+            writer.println(serverContent);
+            writer.close();
 
             dout.close();
             s.close();
