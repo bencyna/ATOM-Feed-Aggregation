@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -6,6 +7,7 @@ import java.io.InputStreamReader;
 
 
 import java.net.*;
+import java.util.concurrent.TimeUnit;
 public class ContentServer {
     public static void main(String[] args) {
         try {
@@ -17,13 +19,20 @@ public class ContentServer {
 
             Socket s = new Socket("localhost", port);
             DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
+            DataInputStream din = new DataInputStream(s.getInputStream());
+
 
             dout.writeUTF(put(args[1]));  
-            dout.flush();  
+            dout.flush();
+            String serverResponse = "";
+            serverResponse = din.readUTF();
+            System.out.println(serverResponse);
+            // every 5 seconds, tell aggregation server this content server is alive
+            for (Integer i = 0; i < 1000; i++) {
+                TimeUnit.SECONDS.sleep(5);
+            }
 
             dout.close();  
-
-            // every 5 seconds, tell aggregation server this content server is alive
 
             s.close();  
             
@@ -36,7 +45,7 @@ public class ContentServer {
     }
 
     static String put(String filepath) {
-        String content = "Location: content server 1 <!endline!>;";
+        String content = "1.type:put 1.name:content server 1 1.<!endline!>;";
         try {
             FileInputStream fstream = new FileInputStream(filepath);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));

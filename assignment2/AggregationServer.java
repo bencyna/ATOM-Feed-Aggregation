@@ -12,21 +12,27 @@ public class AggregationServer {
                 ServerSocket ss = new ServerSocket(server);
                 Socket s=ss.accept();  
                 DataInputStream din=new DataInputStream(s.getInputStream());  
-                DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
                 
                 String putContent="";  
                 putContent=din.readUTF();  
                 String[] parts = putContent.split("<!endline!>;");
 
                 if (parts[0].contains("content server")) {
+                    DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
                     put(parts);
+                    dout.writeUTF("200 ok");  
+                    dout.flush(); 
+
                 }
                 else if (parts[0].contains("client server")) {
+                    DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
                     sendToClient();
+                    dout.writeUTF(sendToClient());  
+                    dout.flush(); 
                 }
                 
-                dout.writeUTF(sendToClient());  
-                dout.flush();  
+                
+               
                 ss.close();
             }
         } catch (Exception e) {
@@ -49,6 +55,9 @@ public class AggregationServer {
                     //Read File Line By Line
                     while ((strLine = br.readLine()) != null)   {
                     // if current line doesn't have an identifyer, we remove the last endline then add this line
+                    if (!strLine.contains("\n")) {
+                        // 
+                    }
                     content += strLine + "\n";
                     }
                     fstream.close();

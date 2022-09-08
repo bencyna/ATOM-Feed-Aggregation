@@ -4,7 +4,7 @@ import time
 # input from 1 content server matches output from one client
 def basics():
     server = Popen(["java", "AggregationServer"]) 
-    run(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
+    contentServer = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
     time.sleep(1)
     run(["java", "GETClient", "AggregationServer:4567"])
     print("comparing your input and output files...")
@@ -32,7 +32,8 @@ def basics():
                     expectedOutputLineNum += 1
             
             print(f"{passCount} tests passed, {failCount} tests failed, tests completed: {expectedOutputLineNum}/{len(input_contents)}")
-    server.kill()
+    server.terminate()
+    contentServer.terminate()
     
 
 
