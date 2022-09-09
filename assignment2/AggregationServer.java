@@ -18,8 +18,13 @@ public class AggregationServer {
                 String[] parts = putContent.split("<!endline!>;");
 
                 if (parts[0].contains("content server")) {
-                    DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
+                    String contentHeaderType = parts[0].split("1.")[0];
+                    String contentHeaderName = parts[0].split("1.")[1];
+                    if (contentHeaderType.contains("ping")) {
+                        
+                    }
                     put(parts);
+                    DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
                     dout.writeUTF("200 ok");  
                     dout.flush(); 
 
@@ -81,5 +86,8 @@ public class AggregationServer {
         catch (Exception e) {
             System.out.println("Error");
         }
+    }
+    void controlContent(String contentServerName) {
+
     }
 }

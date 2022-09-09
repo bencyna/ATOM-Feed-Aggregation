@@ -30,6 +30,7 @@ public class ContentServer {
             // every 5 seconds, tell aggregation server this content server is alive
             for (Integer i = 0; i < 1000; i++) {
                 TimeUnit.SECONDS.sleep(5);
+                
             }
 
             dout.close();  
