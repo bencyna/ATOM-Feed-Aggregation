@@ -38,7 +38,7 @@ public class ContentServer {
 
                 System.out.println(line);
 
-                if (line =="exit") {
+                if (line.contains("exit")) {
                     break;
                 }
             }
