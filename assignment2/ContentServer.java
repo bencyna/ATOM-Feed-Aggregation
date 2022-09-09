@@ -7,10 +7,11 @@ import java.io.InputStreamReader;
 
 
 import java.net.*;
-import java.util.concurrent.TimeUnit;
 public class ContentServer {
     public static void main(String[] args) {
         try {
+            LamportClock CStime = new LamportClock();
+
             if (args.length < 2) {
                 System.out.println("Error, format for connection and file to upload incorrect, please use this format: <ServerName>:<PortNumber> <filepath>");
                 return;
@@ -22,7 +23,7 @@ public class ContentServer {
             DataInputStream din = new DataInputStream(s.getInputStream());
 
 
-            dout.writeUTF(put(args[1]));  
+            dout.writeUTF(put(args[1], CStime));  
             dout.flush();
             String serverResponse = "";
             serverResponse = din.readUTF();
@@ -55,8 +56,8 @@ public class ContentServer {
         return "0";
     }
 
-    static String put(String filepath) {
-        String content = "1.type:put 1.name:content server 1 1.<!endline!>;";
+    static String put(String filepath, LamportClock CStime) {
+        String content = "1.type:put 1.name:content server 1 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
         try {
             FileInputStream fstream = new FileInputStream(filepath);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));

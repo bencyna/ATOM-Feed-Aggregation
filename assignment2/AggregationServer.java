@@ -1,9 +1,14 @@
 import java.io.*;
 import java.net.*;
 
-public class AggregationServer {
+public class AggregationServer extends Thread {
+    String[] activeServers = new String[20];
+
+    Integer serverHead = 0;
+
     public static void main(String[] args) {
         try {
+            LamportClock AStime = new LamportClock();
             Integer server = 4567;
             if (args.length >= 1) {
                 server = Integer.parseInt(args[0]);
@@ -25,7 +30,7 @@ public class AggregationServer {
                     }
                     put(parts);
                     DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                    dout.writeUTF("200 ok");  
+                    dout.writeUTF("200 ok LC:" + String.valueOf(AStime.get()));  
                     dout.flush(); 
 
                 }
@@ -60,10 +65,12 @@ public class AggregationServer {
                     //Read File Line By Line
                     while ((strLine = br.readLine()) != null)   {
                     // if current line doesn't have an identifyer, we remove the last endline then add this line
-                    if (!strLine.contains("\n")) {
-                        // 
+                    if (!strLine.contains("<!endline!>;")) {
+                        content += strLine;
                     }
-                    content += strLine + "\n";
+                    else {
+                        content += strLine + "\n";
+                    }
                     }
                     fstream.close();
                 }
@@ -82,12 +89,14 @@ public class AggregationServer {
                 writer.println(parts[i]);
             }
             writer.close();
+            // call ping because we know the content server is active
+            
         }
         catch (Exception e) {
             System.out.println("Error");
         }
     }
     void controlContent(String contentServerName) {
-
+        // reset timer to 0
     }
 }

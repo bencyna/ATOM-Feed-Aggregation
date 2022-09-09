@@ -9,13 +9,14 @@ public class GETClient {
      */
     static void connect(Integer attempts, String server) {
         try {
+            LamportClock ClientTime = new LamportClock();
             Integer port = Integer.parseInt(server.split(":")[1]);
             Socket s = new Socket("localhost", port);
             DataInputStream din = new DataInputStream(s.getInputStream());
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
             String serverContent = "";
-            dout.writeUTF("client server");
+            dout.writeUTF("typ: get name: client server lc:" + String.valueOf(ClientTime.get()));
             dout.flush();
             serverContent = din.readUTF();
             System.out.println("Server says: " + serverContent);

@@ -1,6 +1,6 @@
 public class LamportClock {
     // 
-    Integer LC;
+    Integer LC = 0;
 
     public Integer get() {
         return LC;
