@@ -1,11 +1,29 @@
 import java.io.*;
 import java.net.*;
 
-public class AggregationServer {
-    String[] activeServers = new String[20];
+public class AggregationServer extends Thread {
+    private static int nextAvailable;
+    private static ASTrackCS[] activeServers = new ASTrackCS[20];
+    private static String[] args;
+
+    public AggregationServer(String[] args) {
+        this.args = args;
+    }
 
     public static void main(String[] args) {
         try {
+            AggregationServer newServer = new AggregationServer(args);
+            newServer.start();
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            System.out.println("hello");
             LamportClock AStime = new LamportClock();
             Integer server = 4567;
             if (args.length >= 1) {
@@ -18,22 +36,45 @@ public class AggregationServer {
                 
                 String putContent="";  
                 putContent=din.readUTF();  
+                System.out.println(putContent);
                 String[] parts = putContent.split("<!endline!>;");
 
                 if (parts[0].contains("content server")) {
-                    String contentHeaderType = parts[0].split("1.")[0];
+                    String contentHeaderType = parts[0].split("1.")[1];
+                    System.out.println(contentHeaderType);
+
                     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
                     if (contentHeaderType.contains("ping")) {
-                        // oneThread.extendContentServerLife(contentheaderName);
+                        System.out.println("ping exectued");
+                        for (int i = 0; i< activeServers.length; i++) {
+                            if (activeServers[i] != null && activeServers[i].getContentServerName() == contentHeaderName) {
+                                activeServers[i].resetTimeLeft();
+                                System.out.println(activeServers[i].getContentServerName());
+                                System.out.println(i);
+                                break;
+                            }
+                        }
                     }
-                    // start new thread for this particular CS
-                    ASTrackCS newContentServer = new ASTrackCS(contentHeaderName);
-                    newContentServer.start();
-                    put(parts);
-                    DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                    dout.writeUTF("200 ok LC:" + String.valueOf(AStime.get()));  
-                    dout.flush(); 
+                    else if (contentHeaderType.contains("put")) {
+                        // start new thread for this particular CS
+                        ASTrackCS newContentServer = new ASTrackCS(contentHeaderName);
+                        newContentServer.start();
+                        activeServers[nextAvailable] = newContentServer;
 
+                        int checked=0;
+                        while (activeServers[nextAvailable] != null) {
+                            checked += 1;
+                            if (checked > 20) {
+                                //we know there are 20 content servers active, need to remove one
+                            }
+                            nextAvailable = (nextAvailable + 1) % 20;
+                        }
+                        put(parts);
+                        DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
+                        dout.writeUTF("200 ok LC:" + String.valueOf(AStime.get()));  
+                        dout.flush(); 
+                    }
+                    // if it contains both...
                 }
                 else if (parts[0].contains("client server")) {
                     DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
@@ -48,6 +89,9 @@ public class AggregationServer {
             }
         } catch (Exception e) {
             System.out.println(e);
+            System.out.println("Restarting server...");
+            AggregationServer newServer = new AggregationServer(args);
+            newServer.start();
         }
     }
     static String sendToClient() {

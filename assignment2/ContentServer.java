@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -9,7 +10,22 @@ import java.io.PrintWriter;
 
 import java.net.*;
 public class ContentServer {
+    private String name;
+
     public static void main(String[] args) {
+      try {
+        ContentServer obj = new ContentServer();
+        obj.run(args);
+      }
+      catch (Exception e){
+        e.printStackTrace();
+      }
+    }
+    static String lamport() {
+        return "0";
+    }
+
+    public void run (String[] args) throws Exception {
         try {
             LamportClock CStime = new LamportClock();
 
@@ -24,7 +40,7 @@ public class ContentServer {
             DataInputStream din = new DataInputStream(s.getInputStream());
 
 
-            dout.writeUTF(put(args[1], CStime));  
+            dout.writeUTF(put(args[1], CStime, true));  
             dout.flush();
             String serverResponse = "";
             serverResponse = din.readUTF();
@@ -38,10 +54,25 @@ public class ContentServer {
                 // Reading data using readLine
                 String line = reader.readLine();
 
-                System.out.println(line);
+                File f = new File(line);
 
                 if (line.contains("exit")) {
                     break;
+                }
+                // if line leads to an input file
+                else if (f.exists() && !f.isDirectory()) {
+                    Socket s2 = new Socket("localhost", port);
+                    DataOutputStream dout2=new DataOutputStream(s.getOutputStream());  
+                    dout2.writeUTF(put(line, CStime, false));  
+                    dout2.flush();
+                    s2.close();
+                }
+                else if (line.contains("ping")) {
+                    Socket s2 = new Socket("localhost", port);
+                    DataOutputStream dout2=new DataOutputStream(s.getOutputStream());  
+                    dout2.writeUTF("1.type:ping 1.name:"+ this.name +"1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;");  
+                    dout2.flush();
+                    s2.close();
                 }
             }
 
@@ -53,27 +84,30 @@ public class ContentServer {
             System.out.println(e);
         }
     }
-    static String lamport() {
-        return "0";
-    }
 
-    static String put(String filepath, LamportClock CStime) {
+     String put(String filepath, LamportClock CStime, boolean first) {
         try {
-            FileInputStream contentNum = new FileInputStream("contentServerNum.txt");
-            BufferedReader contentServerNumber = new BufferedReader(new InputStreamReader(contentNum));
-            String num = contentServerNumber.readLine();
-            String content = "1.type:put 1.name:content server "+ num +" 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
+            String content;
+;            if (first) {
+                FileInputStream contentNum = new FileInputStream("contentServerNum.txt");
+                BufferedReader contentServerNumber = new BufferedReader(new InputStreamReader(contentNum));
+                String num = contentServerNumber.readLine();
+                content = "1.type:put 1.name:content server "+ num +" 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
 
-            int contentNumber = Integer.parseInt(num);
-            contentServerNumber.close();
+                this.name = "content server "+ num + " ";
 
-            String incrementNumber = String.valueOf(contentNumber+1);
+                int contentNumber = Integer.parseInt(num);
+                contentServerNumber.close();
 
-            PrintWriter writer = new PrintWriter("contentServerNum.txt", "UTF-8");
-            writer.print(incrementNumber);
-            writer.close();
-            
+                String incrementNumber = String.valueOf(contentNumber+1);
 
+                PrintWriter writer = new PrintWriter("contentServerNum.txt", "UTF-8");
+                writer.print(incrementNumber);
+                writer.close();
+            }
+            else {
+                content = "1.type:put and ping 1.name:"+ this.name +"1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
+            }
 
             FileInputStream fstream = new FileInputStream(filepath);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));

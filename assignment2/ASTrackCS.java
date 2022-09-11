@@ -4,6 +4,14 @@ public class ASTrackCS extends Thread {
     private String contentServerName;
     private int timeLeft;
 
+    public String getContentServerName() {
+        return this.contentServerName;
+    }
+
+    public void resetTimeLeft() {
+        this.timeLeft = 12;
+    }
+
     public ASTrackCS(String contentServerName) {
         this.contentServerName = contentServerName;
         this.timeLeft = 12;
