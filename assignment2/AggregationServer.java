@@ -22,7 +22,7 @@ public class AggregationServer {
 
                 if (parts[0].contains("content server")) {
                     String contentHeaderType = parts[0].split("1.")[0];
-                    String contentHeaderName = parts[0].split("1.")[1];
+                    String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
                     if (contentHeaderType.contains("ping")) {
                         // oneThread.extendContentServerLife(contentheaderName);
                     }

@@ -24,8 +24,8 @@ public class ASTrackCS extends Thread {
                 System.out.println(this.timeLeft);
                 this.timeLeft -= 1;
                 if (this.timeLeft <= 0) {
-                    System.out.println("Timer ended, time to remove content server content and kill thread");
-                    File contentFile = new File(this.contentServerName +".txt");
+                    System.out.println(this.contentServerName.trim() + " dying");
+                    File contentFile = new File("./saved/"+this.contentServerName.trim() +".txt");
                     contentFile.delete();
                     return;
                 }
