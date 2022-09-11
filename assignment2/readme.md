@@ -4,7 +4,7 @@
 Major design decision accross synchonising functions in the sorterImplementation. I 
 
 ## Compile and run instructions for linux 
-javac GETClient.java ContentServer.java AggregationServer.java
+javac GETClient.java ContentServer.java AggregationServer.java ASTrackCS.java
 
 ## Testing instructions
 make sure that the content server files in ./saved are empty/deleted and make sure client_output.txt file is also empty/deleted

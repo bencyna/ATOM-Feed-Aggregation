@@ -1,43 +1,9 @@
 import java.io.*;
 import java.net.*;
 
-public class AggregationServer extends Thread {
+public class AggregationServer {
     String[] activeServers = new String[20];
-    private String contentServerName;
-    private int timeLeft;
 
-    public AggregationServer(String contentServerName) {
-        try {
-            this.contentServerName = contentServerName;
-            this.timeLeft = 12;
-            while (true) {
-                Thread.sleep(1000);
-                this.timeLeft -= 1;
-                if (this.timeLeft == 0) {
-                    System.out.println("Timer ended, time to remove content server content and kill thread");
-                }
-            }
-        }
-        catch (Exception e) {
-
-        }
-    }
-
-    private void extendContentServerLife(String contentServerName) {
-        if (this.contentServerName.equals(contentServerName)) {
-            this.timeLeft = 12;
-        }
-    }
-
-    //can have a constructor for threads that come from content servers 
-    // and set the content server number to that value, so when we do 
-    // stuff to that thread, we do it to the right content server
-
-    @Override
-    public void run() {
-        // keeping track of content server counters
-        
-    }
     public static void main(String[] args) {
         try {
             LamportClock AStime = new LamportClock();
@@ -58,10 +24,10 @@ public class AggregationServer extends Thread {
                     String contentHeaderType = parts[0].split("1.")[0];
                     String contentHeaderName = parts[0].split("1.")[1];
                     if (contentHeaderType.contains("ping")) {
-                       
+                        // oneThread.extendContentServerLife(contentheaderName);
                     }
                     // start new thread for this particular CS
-                    AggregationServer newContentServer = new AggregationServer(contentHeaderName);
+                    ASTrackCS newContentServer = new ASTrackCS(contentHeaderName);
                     newContentServer.start();
                     put(parts);
                     DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
@@ -100,12 +66,7 @@ public class AggregationServer extends Thread {
                     //Read File Line By Line
                     while ((strLine = br.readLine()) != null)   {
                     // if current line doesn't have an identifyer, we remove the last endline then add this line
-                    if (!strLine.contains("<!endline!>;")) {
-                        content += strLine;
-                    }
-                    else {
                         content += strLine + "\n";
-                    }
                     }
                     fstream.close();
                 }
@@ -119,7 +80,8 @@ public class AggregationServer extends Thread {
     }
     static void put(String[] parts) {
         try {
-            PrintWriter writer = new PrintWriter("./saved/content server 1.txt", "UTF-8");
+            String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+            PrintWriter writer = new PrintWriter("./saved/" + contentHeaderName + ".txt", "UTF-8");
             for (int i = 1; i < parts.length; i++) {
                 writer.println(parts[i]);
             }

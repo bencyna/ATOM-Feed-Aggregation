@@ -4,6 +4,8 @@ import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.File;
 
 
 import java.net.*;
@@ -57,8 +59,23 @@ public class ContentServer {
     }
 
     static String put(String filepath, LamportClock CStime) {
-        String content = "1.type:put 1.name:content server 1 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
         try {
+            FileInputStream contentNum = new FileInputStream("contentServerNum.txt");
+            BufferedReader contentServerNumber = new BufferedReader(new InputStreamReader(contentNum));
+            String num = contentServerNumber.readLine();
+            String content = "1.type:put 1.name:content server "+ num +" 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
+
+            int contentNumber = Integer.parseInt(num);
+            contentServerNumber.close();
+
+            String incrementNumber = String.valueOf(contentNumber+1);
+
+            PrintWriter writer = new PrintWriter("contentServerNum.txt", "UTF-8");
+            writer.print(incrementNumber);
+            writer.close();
+            
+
+
             FileInputStream fstream = new FileInputStream(filepath);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             String strLine;
