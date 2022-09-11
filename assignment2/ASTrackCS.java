@@ -1,3 +1,5 @@
+import java.io.File;
+
 public class ASTrackCS extends Thread {
     private String contentServerName;
     private int timeLeft;
@@ -23,7 +25,9 @@ public class ASTrackCS extends Thread {
                 this.timeLeft -= 1;
                 if (this.timeLeft <= 0) {
                     System.out.println("Timer ended, time to remove content server content and kill thread");
-                    break;
+                    File contentFile = new File(this.contentServerName +".txt");
+                    contentFile.delete();
+                    return;
                 }
             }
         }
