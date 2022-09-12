@@ -6,7 +6,7 @@ public class AggregationServer extends Thread {
     private static int nextAvailable = 0;
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
     private static String[] args;
-    // private PriorityQueue<> incomingRequests 
+    private PriorityQueue<String> incomingRequests; 
 
     public AggregationServer(String[] args) {
         this.args = args;
@@ -69,23 +69,34 @@ public class AggregationServer extends Thread {
 
                     }
                     else if (contentHeaderType.contains("put")) {
-
-                        // start new thread for this particular CS
-                        ASTrackCS newContentServer = new ASTrackCS(contentHeaderName);
-                        newContentServer.start();
-                        activeServers[nextAvailable] = newContentServer;
-
-                        int checked=0;
-                        while (activeServers[nextAvailable] != null) {
-                            checked += 1;
-                            if (checked > 20) {
-                                //we know there are 20 content servers active, need to remove one
-                            }
-                            nextAvailable = (nextAvailable + 1) % 20;
+                        if (parts.length < 2) {
+                            DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
+                            dout.writeUTF("204 - no content provided, LC:" + String.valueOf(AStime.get()));  
+                            dout.flush(); 
                         }
-                        put(parts);
+                        else {
+                            // start new thread for this particular CS
+                            ASTrackCS newContentServer = new ASTrackCS(contentHeaderName);
+                            newContentServer.start();
+                            activeServers[nextAvailable] = newContentServer;
+
+                            int checked=0;
+                            while (activeServers[nextAvailable] != null) {
+                                checked += 1;
+                                if (checked > 20) {
+                                    //we know there are 20 content servers active, need to remove one
+                                }
+                                nextAvailable = (nextAvailable + 1) % 20;
+                            }
+                            put(parts);
+                            DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
+                            dout.writeUTF("200 ok LC:" + String.valueOf(AStime.get()));  
+                            dout.flush(); 
+                        }
+                    }
+                    else {
                         DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                        dout.writeUTF("200 ok LC:" + String.valueOf(AStime.get()));  
+                        dout.writeUTF("Error 400 - not a valid request");  
                         dout.flush(); 
                     }
                 }
