@@ -27,7 +27,8 @@ public class ContentServer {
 
     public void run (String[] args) throws Exception {
         try {
-            LamportClock CStime = new LamportClock();
+            LamportClock CStime = new LamportClock(1);
+
 
             if (args.length < 2) {
                 System.out.println("Error, format for connection and file to upload incorrect, please use this format: <ServerName>:<PortNumber> <filepath>");
@@ -45,6 +46,11 @@ public class ContentServer {
             String serverResponse = "";
             serverResponse = din.readUTF();
             System.out.println(serverResponse);
+            
+            Integer ServerLC = Integer.parseInt(serverResponse.split("LC:")[1]);
+
+            CStime.Set(ServerLC, CStime.get());
+
             boolean userExits = false;
             dout.close();  
             s.close();
@@ -74,7 +80,7 @@ public class ContentServer {
                 else if (line.contains("ping")) {
                     Socket s2 = new Socket("localhost", port);
                     DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
-                    dout2.writeUTF("1.type:ping 1.name:"+ this.name +" 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;");  
+                    dout2.writeUTF("1.type:ping 1.name:"+ this.name +" 1.lc:" + String.valueOf(CStime.get()) + "<!endline!>;");  
                     dout2.flush();
                     dout2.close();  
                     s2.close();
@@ -96,7 +102,7 @@ public class ContentServer {
                 FileInputStream contentNum = new FileInputStream("contentServerNum.txt");
                 BufferedReader contentServerNumber = new BufferedReader(new InputStreamReader(contentNum));
                 String num = contentServerNumber.readLine();
-                content = "1.type:put 1.name:content server "+ num +" 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
+                content = "1.type:put 1.name:content server "+ num +" 1.lc:" + String.valueOf(CStime.get()) + "<!endline!>;";
 
                 this.name = "content server "+ num + " ";
 
@@ -110,7 +116,7 @@ public class ContentServer {
                 writer.close();
             }
             else {
-                content = "1.type:put and ping 1.name:"+ this.name +"1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;";
+                content = "1.type:put and ping 1.name:"+ this.name +"1.lc:" + String.valueOf(CStime.get()) + "<!endline!>;";
             }
 
             FileInputStream fstream = new FileInputStream(filepath);

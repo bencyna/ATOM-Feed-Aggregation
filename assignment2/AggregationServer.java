@@ -27,7 +27,8 @@ public class AggregationServer extends Thread {
     @Override
     public void run() {
         try {
-            LamportClock AStime = new LamportClock();
+            // check for args (on reboot there should be) and update server vals
+            LamportClock AStime = new LamportClock(0);
             Integer server = 4567;
             if (args.length >= 1) {
                 server = Integer.parseInt(args[0]);
@@ -45,8 +46,10 @@ public class AggregationServer extends Thread {
 
                 if (parts[0].contains("content server")) {
                     String contentHeaderType = parts[0].split("1.")[1];
-
                     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+                    Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
+                    System.out.println(String.valueOf(CSServerLC));
+                    // AStime.Set(CSServerLC, AStime.get());
                     
                     if (contentHeaderType.contains("ping") && contentHeaderType.contains("put")) {
                         put(parts);
@@ -68,8 +71,6 @@ public class AggregationServer extends Thread {
                                 break;
                             }
                         }
-                        throw new Exception("this is very bad");
-
                     }
                     else if (contentHeaderType.contains("put")) {
                         if (parts.length < 2) {

@@ -1,5 +1,8 @@
 import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.net.*;
 
@@ -9,7 +12,16 @@ public class GETClient {
      */
     static void connect(Integer attempts, String server) {
         try {
-            LamportClock ClientTime = new LamportClock();
+            FileInputStream LCNum = new FileInputStream("GETServerLamportClock.txt");
+            BufferedReader LamportClockSavedNumber = new BufferedReader(new InputStreamReader(LCNum));
+            String num = LamportClockSavedNumber.readLine();
+
+            int lamportNumber = Integer.parseInt(num);
+
+            LamportClock ClientTime = new LamportClock(lamportNumber);
+
+            LamportClockSavedNumber.close();
+
             Integer port = Integer.parseInt(server.split(":")[1]);
             Socket s = new Socket("localhost", port);
             DataInputStream din = new DataInputStream(s.getInputStream());
@@ -20,14 +32,21 @@ public class GETClient {
             dout.flush();
             serverContent = din.readUTF();
             System.out.println("Server says: " + serverContent);
-            PrintWriter writer = new PrintWriter("client_output.txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("GETServerLamportClock.txt", "UTF-8");
             writer.print(serverContent);
             writer.close();
 
             dout.close();
             s.close();
 
+            // read server LC and update
+            String incrementNumber = String.valueOf(lamportNumber+1);
+            PrintWriter writeLC = new PrintWriter("GETClientLamportClock.txt", "UTF-8");
+            writeLC.print(incrementNumber);
+            writeLC.close();
+
         } catch (Exception e) {
+            e.printStackTrace();
             if (attempts < 3) {
                 System.out.println("Connection failed, trying again...");
                 try {

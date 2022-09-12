@@ -2,6 +2,10 @@ public class LamportClock {
     // 
     Integer LC = 0;
 
+    public LamportClock(Integer time) {
+        LC = time;
+    }
+
     public Integer get() {
         return LC;
     }
@@ -14,5 +18,5 @@ public class LamportClock {
         LC = Math.max(LCa, LCb) + 1;
     }
 
-    // only lamport clocks, not mutual exclusiomn 
+    // only lamport clocks, not mutual exclusion, what does this mean? 
 }
