@@ -57,14 +57,10 @@ public class ContentServer {
                 String line = reader.readLine();
 
                 File f = new File(line);
-                System.out.println(line);
-
 
                 if (line.contains("exit")) {
                     return;
                 }
-
-               
 
                 // if line leads to an input file
                 if (f.exists() && !f.isDirectory()) {  
