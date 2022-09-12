@@ -1,10 +1,12 @@
 import java.io.*;
 import java.net.*;
+import java.util.PriorityQueue;
 
 public class AggregationServer extends Thread {
     private static int nextAvailable = 0;
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
     private static String[] args;
+    // private PriorityQueue<> incomingRequests 
 
     public AggregationServer(String[] args) {
         this.args = args;
@@ -29,15 +31,20 @@ public class AggregationServer extends Thread {
                 server = Integer.parseInt(args[0]);
             }
             while (true) {
+                System.out.println("hello");
                 ServerSocket ss = new ServerSocket(server);
 
                 Socket s=ss.accept();  
-
+                System.out.println("hello2");
                 DataInputStream din=new DataInputStream(s.getInputStream());  
+                System.out.println("hello10");
                 
                 String putContent="";  
                 putContent=din.readUTF();  
+                System.out.println("hello11");
+
                 String[] parts = putContent.split("<!endline!>;");
+                System.out.println("helloMid");
 
                 if (parts[0].contains("content server")) {
                     String contentHeaderType = parts[0].split("1.")[1];
@@ -52,8 +59,12 @@ public class AggregationServer extends Thread {
                                 break;
                             }
                         }
+                    System.out.println("helloMid2");
+
                     }
                     else if (contentHeaderType.contains("put")) {
+                    System.out.println("helloMid3");
+
                         // start new thread for this particular CS
                         ASTrackCS newContentServer = new ASTrackCS(contentHeaderName);
                         newContentServer.start();
@@ -71,6 +82,8 @@ public class AggregationServer extends Thread {
                         DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
                         dout.writeUTF("200 ok LC:" + String.valueOf(AStime.get()));  
                         dout.flush(); 
+                    System.out.println("helloMid4");
+
                     }
                     // if it contains both...
                 }
@@ -80,6 +93,8 @@ public class AggregationServer extends Thread {
                     dout.writeUTF(sendToClient());  
                     dout.flush(); 
                 }
+                System.out.println("hello3");
+
                 ss.close();
             }
         } catch (Exception e) {

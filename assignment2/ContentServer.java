@@ -50,14 +50,14 @@ public class ContentServer {
             s.close();
 
             while (!userExits) {
-                
-                Socket s2 = new Socket("localhost", port);
-                DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
                 // Enter data using BufferReader
                 BufferedReader reader = new BufferedReader(
                 new InputStreamReader(System.in));
                 // Reading data using readLine
                 String line = reader.readLine();
+
+                Socket s2 = new Socket("localhost", port);
+                DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
 
                 File f = new File(line);
 
