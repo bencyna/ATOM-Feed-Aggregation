@@ -64,21 +64,28 @@ public class ContentServer {
                     return;
                 }
 
-                // otherwise creare a new socket connection with the AS
-                Socket s2 = new Socket("localhost", port);
-                DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
+               
 
                 // if line leads to an input file
                 if (f.exists() && !f.isDirectory()) {  
-                    System.out.println("hit");
-                    dout2.writeUTF(put(line, CStime, false));  
+                    Socket s2 = new Socket("localhost", port);
+                    DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
+                    dout2.writeUTF(put(line, CStime, false));
+                    dout2.flush();
+                    dout2.close();  
+                    s2.close();  
                 }
                 else if (line.contains("ping")) {
+                    Socket s2 = new Socket("localhost", port);
+                    DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
                     dout2.writeUTF("1.type:ping 1.name:"+ this.name +" 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;");  
+                    dout2.flush();
+                    dout2.close();  
+                    s2.close();
                 }
-                dout2.flush();
-                dout2.close();  
-                s2.close();
+                else {
+                    System.out.println("Invalid input, either write \"ping\" to keep content server alive or provide the path for a new input text file");
+                }
             }
             
         } catch (Exception e) {

@@ -51,14 +51,18 @@ public class AggregationServer extends Thread {
                         DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
                         dout.writeUTF("201 - HTTP_CREATED, LC:" + String.valueOf(AStime.get()));  
                         dout.flush(); 
+                        for (int i = 0; i< activeServers.length; i++) {
+                            if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
+                                activeServers[i].resetTimeLeft();
+                                break;
+                            }
+                        }
                     }
 
                     else if (contentHeaderType.contains("ping")) {
                         for (int i = 0; i< activeServers.length; i++) {
                             if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
                                 activeServers[i].resetTimeLeft();
-                                System.out.println(activeServers[i].getContentServerName());
-                                System.out.println(i);
                                 break;
                             }
                         }
