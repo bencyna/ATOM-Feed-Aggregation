@@ -2,7 +2,7 @@ import java.io.*;
 import java.net.*;
 
 public class AggregationServer extends Thread {
-    private static int nextAvailable;
+    private static int nextAvailable = 0;
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
     private static String[] args;
 
@@ -23,7 +23,6 @@ public class AggregationServer extends Thread {
     @Override
     public void run() {
         try {
-            System.out.println("hello");
             LamportClock AStime = new LamportClock();
             Integer server = 4567;
             if (args.length >= 1) {
@@ -31,23 +30,22 @@ public class AggregationServer extends Thread {
             }
             while (true) {
                 ServerSocket ss = new ServerSocket(server);
+
                 Socket s=ss.accept();  
+
                 DataInputStream din=new DataInputStream(s.getInputStream());  
                 
                 String putContent="";  
                 putContent=din.readUTF();  
-                System.out.println(putContent);
                 String[] parts = putContent.split("<!endline!>;");
 
                 if (parts[0].contains("content server")) {
                     String contentHeaderType = parts[0].split("1.")[1];
-                    System.out.println(contentHeaderType);
 
                     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
                     if (contentHeaderType.contains("ping")) {
-                        System.out.println("ping exectued");
                         for (int i = 0; i< activeServers.length; i++) {
-                            if (activeServers[i] != null && activeServers[i].getContentServerName() == contentHeaderName) {
+                            if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
                                 activeServers[i].resetTimeLeft();
                                 System.out.println(activeServers[i].getContentServerName());
                                 System.out.println(i);
@@ -82,16 +80,14 @@ public class AggregationServer extends Thread {
                     dout.writeUTF(sendToClient());  
                     dout.flush(); 
                 }
-                
-                
-               
                 ss.close();
             }
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("Restarting server...");
-            AggregationServer newServer = new AggregationServer(args);
-            newServer.start();
+
+            // AggregationServer newServer = new AggregationServer(args);
+            // newServer.start();
         }
     }
     static String sendToClient() {

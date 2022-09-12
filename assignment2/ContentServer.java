@@ -46,8 +46,13 @@ public class ContentServer {
             serverResponse = din.readUTF();
             System.out.println(serverResponse);
             boolean userExits = false;
+            dout.close();  
+            s.close();
 
             while (!userExits) {
+                
+                Socket s2 = new Socket("localhost", port);
+                DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
                 // Enter data using BufferReader
                 BufferedReader reader = new BufferedReader(
                 new InputStreamReader(System.in));
@@ -60,25 +65,16 @@ public class ContentServer {
                     break;
                 }
                 // if line leads to an input file
-                else if (f.exists() && !f.isDirectory()) {
-                    Socket s2 = new Socket("localhost", port);
-                    DataOutputStream dout2=new DataOutputStream(s.getOutputStream());  
+                else if (f.exists() && !f.isDirectory()) {  
                     dout2.writeUTF(put(line, CStime, false));  
-                    dout2.flush();
-                    s2.close();
                 }
                 else if (line.contains("ping")) {
-                    Socket s2 = new Socket("localhost", port);
-                    DataOutputStream dout2=new DataOutputStream(s.getOutputStream());  
-                    dout2.writeUTF("1.type:ping 1.name:"+ this.name +"1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;");  
-                    dout2.flush();
-                    s2.close();
+                    dout2.writeUTF("1.type:ping 1.name:"+ this.name +" 1.lc:" + String.valueOf(CStime.get()) + "1.<!endline!>;");  
                 }
+                dout2.flush();
+                dout2.close();  
+                s2.close();
             }
-
-            dout.close();  
-
-            s.close();  
             
         } catch (Exception e) {
             System.out.println(e);
