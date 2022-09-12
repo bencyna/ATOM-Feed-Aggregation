@@ -6,7 +6,9 @@ public class AggregationServer extends Thread {
     private static int nextAvailable = 0;
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
     private static String[] args;
+    private ServerSocket ss;
     private PriorityQueue<String> incomingRequests; 
+
 
     public AggregationServer(String[] args) {
         this.args = args;
@@ -31,7 +33,7 @@ public class AggregationServer extends Thread {
                 server = Integer.parseInt(args[0]);
             }
             while (true) {
-                ServerSocket ss = new ServerSocket(server);
+                ss = new ServerSocket(server);
 
                 Socket s=ss.accept();  
                 DataInputStream din=new DataInputStream(s.getInputStream());  
@@ -66,6 +68,7 @@ public class AggregationServer extends Thread {
                                 break;
                             }
                         }
+                        throw new Exception("this is very bad");
 
                     }
                     else if (contentHeaderType.contains("put")) {
@@ -112,9 +115,17 @@ public class AggregationServer extends Thread {
         } catch (Exception e) {
             System.out.println(e);
             System.out.println("Restarting server...");
-
-            // AggregationServer newServer = new AggregationServer(args);
-            // newServer.start();
+            try {
+                if (this.ss != null) {
+                    this.ss.close();
+                }
+            }
+            catch (Exception err) {
+                System.out.println("unable to close socket");
+            }
+            
+            AggregationServer newServer = new AggregationServer(args);
+            newServer.start();
         }
     }
     static String sendToClient() {
