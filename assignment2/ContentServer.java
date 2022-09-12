@@ -56,16 +56,21 @@ public class ContentServer {
                 // Reading data using readLine
                 String line = reader.readLine();
 
+                File f = new File(line);
+                System.out.println(line);
+
+
+                if (line.contains("exit")) {
+                    return;
+                }
+
+                // otherwise creare a new socket connection with the AS
                 Socket s2 = new Socket("localhost", port);
                 DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
 
-                File f = new File(line);
-
-                if (line.contains("exit")) {
-                    break;
-                }
                 // if line leads to an input file
-                else if (f.exists() && !f.isDirectory()) {  
+                if (f.exists() && !f.isDirectory()) {  
+                    System.out.println("hit");
                     dout2.writeUTF(put(line, CStime, false));  
                 }
                 else if (line.contains("ping")) {
