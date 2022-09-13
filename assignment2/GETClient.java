@@ -28,7 +28,7 @@ public class GETClient {
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
             String serverContentAll = "";
-            dout.writeUTF("typ: get name: client server lc:" + String.valueOf(ClientTime.get()));
+            dout.writeUTF("type: get name: client server lc:" + String.valueOf(ClientTime.get()));
             dout.flush();
             serverContentAll = din.readUTF();
             String serverContent = serverContentAll.split("<!endline!>;")[1];

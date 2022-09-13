@@ -6,7 +6,7 @@ Major design decision accross synchonising functions in the sorterImplementation
 - When a content server sends new data to the aggregate server, it will override the old content for this server, meaning one server can only give 1 piece of information at a time
 
 ## Compile and run instructions for linux 
-javac GETClient.java ContentServer.java AggregationServer.java ASTrackCS.java
+javac GETClient.java ContentServer.java AggregationServer.java ASTrackCS.java QueueContent.java
 
 ## Testing instructions
 make sure that the content server files in ./saved are empty/deleted and make sure client_output.txt file is also empty/deleted

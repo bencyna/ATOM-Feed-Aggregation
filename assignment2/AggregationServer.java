@@ -34,14 +34,16 @@ public class AggregationServer extends Thread {
             }
             while (true) {
                 ss = new ServerSocket(server);
-
                 Socket s=ss.accept();  
                 DataInputStream din=new DataInputStream(s.getInputStream());  
                 
-                String putContent="";  
-                putContent=din.readUTF();  
+                String content="";  
+                content=din.readUTF();  
 
-                String[] parts = putContent.split("<!endline!>;");
+                String[] parts = content.split("<!endline!>;");
+
+                QueueContent incomingRequest = new QueueContent(content);
+                this.incomingRequests.add(incomingRequest);
 
                 if (parts[0].contains("content server")) {
                     String contentHeaderType = parts[0].split("1.")[1];

@@ -4,7 +4,9 @@ public class QueueContent {
 
     QueueContent(String content) {
         this.content = content;
-        // calculate the priority based on the content
+        String[] parts = content.split("<!endline!>;");
+
+        System.out.println(content);
     }
 
     public Integer getPriority() {
