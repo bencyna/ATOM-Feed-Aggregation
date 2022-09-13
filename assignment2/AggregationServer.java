@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 public class AggregationServer extends Thread {
     private static int nextAvailable = 0;
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
-    private static String[] args;
+    private String[] args;
     private ServerSocket ss;
     private PriorityQueue<String> incomingRequests; 
 
@@ -48,13 +48,12 @@ public class AggregationServer extends Thread {
                     String contentHeaderType = parts[0].split("1.")[1];
                     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
                     Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
-                    System.out.println(String.valueOf(CSServerLC));
-                    // AStime.Set(CSServerLC, AStime.get());
+                    AStime.Set(CSServerLC, AStime.get());
                     
                     if (contentHeaderType.contains("ping") && contentHeaderType.contains("put")) {
                         put(parts);
                         DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                        dout.writeUTF("201 - HTTP_CREATED, LC:" + String.valueOf(AStime.get()));  
+                        dout.writeUTF("200 ok, LC:" + String.valueOf(AStime.get()));  
                         dout.flush(); 
                         for (int i = 0; i< activeServers.length; i++) {
                             if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
@@ -94,7 +93,7 @@ public class AggregationServer extends Thread {
                             }
                             put(parts);
                             DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                            dout.writeUTF("200 ok LC:" + String.valueOf(AStime.get()));  
+                            dout.writeUTF("201 - HTTP_CREATED, LC:" + String.valueOf(AStime.get()));  
                             dout.flush(); 
                         }
                     }
@@ -105,9 +104,11 @@ public class AggregationServer extends Thread {
                     }
                 }
                 else if (parts[0].contains("client server")) {
+                    Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
+                    AStime.Set(CSServerLC, AStime.get());
                     DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                    sendToClient();
-                    dout.writeUTF(sendToClient());  
+                    sendToClient(AStime);
+                    dout.writeUTF(sendToClient(AStime));  
                     dout.flush(); 
                 }
 
@@ -129,10 +130,11 @@ public class AggregationServer extends Thread {
             newServer.start();
         }
     }
-    static String sendToClient() {
+    static String sendToClient(LamportClock AStime) {
         // read files and return contents in string format
         try {
-            String content = "";
+             String content = String.valueOf(AStime.get()) + "<!endline!>;";
+
 
             File folder = new File("./saved");
             File[] listOfFiles = folder.listFiles();

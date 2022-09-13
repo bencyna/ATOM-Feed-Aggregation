@@ -12,7 +12,7 @@ public class GETClient {
      */
     static void connect(Integer attempts, String server) {
         try {
-            FileInputStream LCNum = new FileInputStream("GETServerLamportClock.txt");
+            FileInputStream LCNum = new FileInputStream("GETClientLamportClock.txt");
             BufferedReader LamportClockSavedNumber = new BufferedReader(new InputStreamReader(LCNum));
             String num = LamportClockSavedNumber.readLine();
 
@@ -27,12 +27,18 @@ public class GETClient {
             DataInputStream din = new DataInputStream(s.getInputStream());
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
-            String serverContent = "";
+            String serverContentAll = "";
             dout.writeUTF("typ: get name: client server lc:" + String.valueOf(ClientTime.get()));
             dout.flush();
-            serverContent = din.readUTF();
+            serverContentAll = din.readUTF();
+            String serverContent = serverContentAll.split("<!endline!>;")[1];
+            Integer ServerLamport = Integer.parseInt(serverContentAll.split("<!endline!>;")[0]);
+
+
+
+
             System.out.println("Server says: " + serverContent);
-            PrintWriter writer = new PrintWriter("GETServerLamportClock.txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("client_output.txt", "UTF-8");
             writer.print(serverContent);
             writer.close();
 
@@ -40,9 +46,9 @@ public class GETClient {
             s.close();
 
             // read server LC and update
-            String incrementNumber = String.valueOf(lamportNumber+1);
+            ClientTime.Set(ServerLamport, ClientTime.get());
             PrintWriter writeLC = new PrintWriter("GETClientLamportClock.txt", "UTF-8");
-            writeLC.print(incrementNumber);
+            writeLC.print(ClientTime.get());
             writeLC.close();
 
         } catch (Exception e) {

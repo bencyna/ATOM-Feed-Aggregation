@@ -29,7 +29,6 @@ public class ContentServer {
         try {
             LamportClock CStime = new LamportClock(1);
 
-
             if (args.length < 2) {
                 System.out.println("Error, format for connection and file to upload incorrect, please use this format: <ServerName>:<PortNumber> <filepath>");
                 return;
@@ -72,9 +71,18 @@ public class ContentServer {
                 if (f.exists() && !f.isDirectory()) {  
                     Socket s2 = new Socket("localhost", port);
                     DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
+                    DataInputStream din2 = new DataInputStream(s2.getInputStream());
+
                     dout2.writeUTF(put(line, CStime, false));
+                    String serverRes = "";
+                    serverRes = din2.readUTF();
+                    System.out.println(serverRes);
+                    
+                    Integer ServerLamport = Integer.parseInt(serverRes.split("LC:")[1]);
                     dout2.flush();
-                    dout2.close();  
+                    dout2.close();
+                    
+                    CStime.Set(ServerLamport, CStime.get());  
                     s2.close();  
                 }
                 else if (line.contains("ping")) {
