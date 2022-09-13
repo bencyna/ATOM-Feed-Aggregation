@@ -34,6 +34,9 @@ public class GETClient {
             String serverContent = serverContentAll.split("<!endline!>;")[1];
             Integer ServerLamport = Integer.parseInt(serverContentAll.split("<!endline!>;")[0]);
 
+
+
+
             System.out.println("Server says: " + serverContent);
             PrintWriter writer = new PrintWriter("client_output.txt", "UTF-8");
             writer.print(serverContent);

@@ -7,7 +7,8 @@ public class AggregationServer extends Thread {
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
     private String[] args;
     private ServerSocket ss;
-    PriorityQueue<QueueContent> incomingRequests = new PriorityQueue<>(20, (a,b) -> Integer.compare(a.getPriority(), b.getPriority()));
+    private PriorityQueue<String> incomingRequests; 
+
 
     public AggregationServer(String[] args) {
         this.args = args;
