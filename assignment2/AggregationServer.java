@@ -17,7 +17,6 @@ public class AggregationServer extends Thread {
         try {
             AggregationServer newServer = new AggregationServer(args);
             newServer.start();
-
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -42,10 +41,22 @@ public class AggregationServer extends Thread {
 
                 String[] parts = content.split("<!endline!>;");
 
+                if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
+                    // run the ping straight away
+                    String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+                    for (int i = 0; i< activeServers.length; i++) {
+                        if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
+                            activeServers[i].resetTimeLeft();
+                            break;
+                        }
+                    }
+                }
+                else {
                 QueueContent incomingRequest = new QueueContent(content);
                 this.incomingRequests.add(incomingRequest);
-                System.out.println(this.incomingRequests.peek().getPriority());
+                }
 
+                
                 if (parts[0].contains("content server")) {
                     String contentHeaderType = parts[0].split("1.")[1];
                     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
@@ -65,14 +76,6 @@ public class AggregationServer extends Thread {
                         }
                     }
 
-                    else if (contentHeaderType.contains("ping")) {
-                        for (int i = 0; i< activeServers.length; i++) {
-                            if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
-                                activeServers[i].resetTimeLeft();
-                                break;
-                            }
-                        }
-                    }
                     else if (contentHeaderType.contains("put")) {
                         if (parts.length < 2) {
                             DataOutputStream dout=new DataOutputStream(s.getOutputStream());  

@@ -1,6 +1,9 @@
+import java.net.Socket;
+
 public class QueueContent {
     public int priority;
     public String content;
+    Socket socket;
 
     QueueContent(String content) {
         this.content = content;

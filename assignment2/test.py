@@ -38,7 +38,7 @@ def basics():
 
 
 
-# 3 content server do put, content server 2 is killed, ensure the next get is correct
+# 3 content servers do a put, content server 2 is killed, ensure the next get is correct
 def killCS():
     pass
 
