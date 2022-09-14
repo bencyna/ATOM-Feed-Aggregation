@@ -29,7 +29,6 @@ public class ASTrackCS extends Thread {
         try {
             while (true) {
                 Thread.sleep(1000);
-                System.out.println(this.timeLeft);
                 this.timeLeft -= 1;
                 if (this.timeLeft <= 0) {
                     System.out.println(this.contentServerName.trim() + " dying");

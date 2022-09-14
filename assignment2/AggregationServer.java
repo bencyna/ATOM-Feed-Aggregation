@@ -44,6 +44,7 @@ public class AggregationServer extends Thread {
 
                 QueueContent incomingRequest = new QueueContent(content);
                 this.incomingRequests.add(incomingRequest);
+                System.out.println(this.incomingRequests.peek().getPriority());
 
                 if (parts[0].contains("content server")) {
                     String contentHeaderType = parts[0].split("1.")[1];
