@@ -18,7 +18,7 @@ public class AggregationServer extends Thread {
             AggregationServer newServer = new AggregationServer(args);
             newServer.start();
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println(e); 
         }
     }
 
@@ -31,6 +31,21 @@ public class AggregationServer extends Thread {
             if (args.length >= 1) {
                 server = Integer.parseInt(args[0]);
             }
+
+            // check for existing content servers and start
+            FileInputStream fstream = new FileInputStream("./server_state.txt");
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            String pastCS;
+
+            //Read File Line By Line
+            while ((pastCS = br.readLine()) != null)   {
+                ASTrackCS newContentServer = new ASTrackCS(pastCS);
+                newContentServer.start();
+                activeServers[nextAvailable] = newContentServer;
+                nextAvailable = (nextAvailable + 1) % 20;
+            }
+            fstream.close();
+
             while (true) {
                 ss = new ServerSocket(server);
                 Socket s=ss.accept();  

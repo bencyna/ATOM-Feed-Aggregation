@@ -31,7 +31,9 @@ public class GETClient {
             dout.writeUTF("type: get name: client server lc:" + String.valueOf(ClientTime.get()));
             dout.flush();
             serverContentAll = din.readUTF();
-            String serverContent = serverContentAll.split("<!endline!>;")[1];
+            String[] serverContentParts = serverContentAll.split("<!endline!>;");
+            String serverContent = serverContentParts.length > 1 ? serverContentParts[1] : "";
+
             Integer ServerLamport = Integer.parseInt(serverContentAll.split("<!endline!>;")[0]);
 
             System.out.println("Server says: " + serverContent);
