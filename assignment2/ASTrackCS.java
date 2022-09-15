@@ -13,7 +13,7 @@ public class ASTrackCS extends Thread {
         try {
             Writer output; 
             output = new BufferedWriter(new FileWriter("./server_state.txt", true));
-            output.append(contentServerName);
+            output.append(contentServerName + System.getProperty("line.separator"));
             output.close();
 
             this.contentServerName = contentServerName;

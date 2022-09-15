@@ -49,6 +49,7 @@ public class AggregationServer extends Thread {
                             activeServers[i].resetTimeLeft();
                             break;
                         }
+                        // if not found then the content server has been removed and we can send an err message
                     }
                 }
                 else {
