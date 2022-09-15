@@ -39,7 +39,7 @@ public class AggregationServer extends Thread {
 
             //Read File Line By Line
             while ((pastCS = br.readLine()) != null)   {
-                ASTrackCS newContentServer = new ASTrackCS(pastCS);
+                ASTrackCS newContentServer = new ASTrackCS(pastCS, true);
                 newContentServer.start();
                 activeServers[nextAvailable] = newContentServer;
                 nextAvailable = (nextAvailable + 1) % 20;
@@ -100,7 +100,7 @@ public class AggregationServer extends Thread {
                         }
                         else {
                             // start new thread for this particular CS
-                            ASTrackCS newContentServer = new ASTrackCS(contentHeaderName);
+                            ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false);
                             newContentServer.start();
                             activeServers[nextAvailable] = newContentServer;
 

@@ -9,13 +9,14 @@ public class ASTrackCS extends Thread {
     private String contentServerName;
     private int timeLeft;
 
-    public ASTrackCS(String contentServerName) {
+    public ASTrackCS(String contentServerName, boolean reopen) {
         try {
-            Writer output; 
-            output = new BufferedWriter(new FileWriter("./server_state.txt", true));
-            output.append(contentServerName + System.getProperty("line.separator"));
-            output.close();
-
+            if (!reopen) {
+                Writer output; 
+                output = new BufferedWriter(new FileWriter("./server_state.txt", true));
+                output.append(contentServerName + System.getProperty("line.separator"));
+                output.close();
+            }
             this.contentServerName = contentServerName;
             this.timeLeft = 12;
         }
