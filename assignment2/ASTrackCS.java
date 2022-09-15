@@ -50,7 +50,7 @@ public class ASTrackCS extends Thread {
 
             while((currentLine = reader.readLine()) != null) {
                 String trimmedLine = currentLine.trim();
-                if(trimmedLine.equals(this.contentServerName)) continue;
+                if(trimmedLine.equals(this.contentServerName.trim())) continue;
                 writer.write(currentLine + System.getProperty("line.separator"));
             }
             writer.flush();
