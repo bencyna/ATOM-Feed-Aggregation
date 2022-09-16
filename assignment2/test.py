@@ -1,5 +1,7 @@
 from subprocess import run, Popen
 import time
+import os
+import glob
 
 # input from 1 content server matches output from one client
 def basics():
@@ -40,8 +42,83 @@ def basics():
 
 # 3 content servers do a put, content server 2 is killed, ensure the next get is correct
 def killCS():
-    pass
+    server = Popen(["java", "AggregationServer"]) 
+    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
+    time.sleep(1)
+    contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
+    time.sleep(1)
+    contentServer3 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file3.txt"])
+    time.sleep(1)
+    run(["java", "GETClient", "AggregationServer:4567"])
+    print("comparing your input and output files...")
+    time.sleep(1)
+    with open("./client_output.txt") as output:
+        with open("./input/file1.txt") as input1:
+            with open("./input/file2.txt") as input2:
+                with open("./input/file3.txt") as input3:
+                    input_contents1 = input1.readlines()
+                    input_contents2 = input2.readlines()
+                    input_contents3 = input3.readlines()
+                    output_contents = output.readlines()
+                    passCount = 0
+                    failCount = 0
+                    expectedOutputLineNum = 0   
 
+                    for line in input_contents1: 
+                        if expectedOutputLineNum >= len(output_contents):
+                            break
+
+                        if len(str(output_contents).strip()) > 0:
+                            if output_contents[expectedOutputLineNum].strip() == line.strip():
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
+                                passCount += 1
+                            else:
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                                failCount +=1
+                        
+                            expectedOutputLineNum += 1
+
+                    for line in input_contents2: 
+                        if expectedOutputLineNum >= len(output_contents):
+                            break
+
+                        if len(str(output_contents).strip()) > 0:
+                            if output_contents[expectedOutputLineNum].strip() == line.strip():
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
+                                passCount += 1
+                            else:
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                                failCount +=1
+                        
+                            expectedOutputLineNum += 1
+                    
+                    for line in input_contents3: 
+                        if expectedOutputLineNum >= len(output_contents):
+                            break
+
+                        if len(str(output_contents).strip()) > 0:
+                            if output_contents[expectedOutputLineNum].strip() == line.strip():
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
+                                passCount += 1
+                            else:
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                                failCount +=1
+                        
+                            expectedOutputLineNum += 1
+                    
+                    
+                    print(f"{passCount} tests passed, {failCount} tests failed, tests completed: {expectedOutputLineNum}/{len(input_contents1)+len(input_contents2)+len(input_contents3)}")
+
+    contentServer1.terminate()
+    contentServer2.terminate()
+    contentServer3.terminate()
+    server.terminate()
+    open('server_state.txt', 'w').close()
+    # open('client_output.txt', 'w').close()
+    server_saved = glob.glob('./saved/')
+    for saved in server_saved:
+        os.remove(saved)
+  
 
 # client tries reconnecting, aggregation server killed
 def failures():
@@ -53,4 +130,5 @@ def advanced():
     pass
 
 
-basics();
+# basics()
+killCS()
