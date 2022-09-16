@@ -1,5 +1,6 @@
 from subprocess import run, Popen
 import time
+from pathlib import Path
 import os
 import glob
 
@@ -113,12 +114,12 @@ def killCS():
     contentServer2.terminate()
     contentServer3.terminate()
     server.terminate()
+    files = glob.glob('saved/*')
+    for f in files:
+        os.remove(f)
+
     open('server_state.txt', 'w').close()
-    # open('client_output.txt', 'w').close()
-    server_saved = glob.glob('./saved/')
-    for saved in server_saved:
-        os.remove(saved)
-  
+    open('client_output.txt', 'w').close()
 
 # client tries reconnecting, aggregation server killed
 def failures():
