@@ -114,30 +114,68 @@ def killCS():
     server.terminate()
     removeWaste()
 
-# client tries reconnecting, aggregation server killed
+# aggregation server killed
 def failures():
     server = Popen(["java", "AggregationServer"]) 
+    time.sleep(1)
     contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
-    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
+    time.sleep(1)
+    contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
+    time.sleep(1)
     server.terminate()
-    run(["java", "GETClient", "AggregationServer:4567"])
+    time.sleep(1)
     new_server = Popen(["java", "AggregationServer"]) 
+    run(["java", "GETClient", "AggregationServer:4567"])
 
-    #compare output    
+    with open("./client_output.txt") as output:
+        with open("./input/file1.txt") as input:
+            with open("./input/file2.txt") as input2:
+                input_contents = input.readlines()
+                input_contents2 = input2.readlines()
+                output_contents = output.readlines()
+                passCount = 0
+                failCount = 0
+                expectedOutputLineNum = 0     
+
+                for line in input_contents: 
+                    if expectedOutputLineNum >= len(output_contents):
+                        break
+
+                    if len(str(output_contents).strip()) > 0:
+                        if output_contents[expectedOutputLineNum].strip() == line.strip():
+                            print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
+                            passCount += 1
+                        else:
+                            print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                            failCount +=1
+                    
+                        expectedOutputLineNum += 1
+                        
+                for line in input_contents2: 
+                    if expectedOutputLineNum >= len(output_contents):
+                        break
+
+                    if len(str(output_contents).strip()) > 0:
+                        if output_contents[expectedOutputLineNum].strip() == line.strip():
+                            print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
+                            passCount += 1
+                        else:
+                            print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                            failCount +=1
+                    
+                        expectedOutputLineNum += 1
+            
+        print(f"{passCount} lines passed, {failCount} lines failed, lines completed: {expectedOutputLineNum}/{len(output_contents)}")
 
 
 
     contentServer1.terminate()
+    contentServer2.terminate()
     new_server.terminate()
+    removeWaste()
 
 
-# content server put to AS, client GET, kill AS, restart AS client does GET
-def advanced():
-    pass
-
-
-basics()
-
+# basics()
 ## ordering issues need to sort in Java code (will be based on content server ordering)
 # killCS()
-# failures()
+failures()
