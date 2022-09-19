@@ -45,11 +45,13 @@ def basics():
 def killCS():
     server = Popen(["java", "AggregationServer"]) 
     contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
-    time.sleep(1)
+    for x in range(0, 10):
+        print(f"Letting cs1 die... {x} seconds/10")
+        time.sleep(1)
     contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
     time.sleep(1)
     contentServer3 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file3.txt"])
-    time.sleep(1)
+    time.sleep(2)
     run(["java", "GETClient", "AggregationServer:4567"])
     print("comparing your input and output files...")
     time.sleep(1)
@@ -64,20 +66,6 @@ def killCS():
                     passCount = 0
                     failCount = 0
                     expectedOutputLineNum = 0   
-
-                    for line in input_contents1: 
-                        if expectedOutputLineNum >= len(output_contents):
-                            break
-
-                        if len(str(output_contents).strip()) > 0:
-                            if output_contents[expectedOutputLineNum].strip() == line.strip():
-                                print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
-                                passCount += 1
-                            else:
-                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
-                                failCount +=1
-                        
-                            expectedOutputLineNum += 1
 
                     for line in input_contents2: 
                         if expectedOutputLineNum >= len(output_contents):
@@ -108,15 +96,15 @@ def killCS():
                             expectedOutputLineNum += 1
                     
                     
-                    print(f"{passCount} lines passed, {failCount} lines failed, lines completed: {expectedOutputLineNum}/{len(input_contents1)+len(input_contents2)+len(input_contents3)}")
+                    print(f"{passCount} lines passed, {failCount} lines failed, lines completed: {expectedOutputLineNum}/{len(input_contents2)+len(input_contents3)}")
 
     contentServer1.terminate()
     contentServer2.terminate()
     contentServer3.terminate()
     server.terminate()
     files = glob.glob('saved/*')
-    # for f in files:
-        # os.remove(f)
+    for f in files:
+        os.remove(f)
 
     open('server_state.txt', 'w').close()
     # open('client_output.txt', 'w').close()
