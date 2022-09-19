@@ -34,7 +34,7 @@ def basics():
                 
                     expectedOutputLineNum += 1
             
-            print(f"{passCount} tests passed, {failCount} tests failed, tests completed: {expectedOutputLineNum}/{len(input_contents)}")
+            print(f"{passCount} lines passed, {failCount} lines failed, lines completed: {expectedOutputLineNum}/{len(input_contents)}")
     server.terminate()
     contentServer.terminate()
     
@@ -108,18 +108,18 @@ def killCS():
                             expectedOutputLineNum += 1
                     
                     
-                    print(f"{passCount} tests passed, {failCount} tests failed, tests completed: {expectedOutputLineNum}/{len(input_contents1)+len(input_contents2)+len(input_contents3)}")
+                    print(f"{passCount} lines passed, {failCount} lines failed, lines completed: {expectedOutputLineNum}/{len(input_contents1)+len(input_contents2)+len(input_contents3)}")
 
     contentServer1.terminate()
     contentServer2.terminate()
     contentServer3.terminate()
     server.terminate()
     files = glob.glob('saved/*')
-    for f in files:
-        os.remove(f)
+    # for f in files:
+        # os.remove(f)
 
     open('server_state.txt', 'w').close()
-    open('client_output.txt', 'w').close()
+    # open('client_output.txt', 'w').close()
 
 # client tries reconnecting, aggregation server killed
 def failures():
