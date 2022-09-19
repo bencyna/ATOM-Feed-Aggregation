@@ -175,7 +175,7 @@ def failures():
     removeWaste()
 
 
-# basics()
+basics()
 ## ordering issues need to sort in Java code (will be based on content server ordering)
-# killCS()
+killCS()
 failures()
