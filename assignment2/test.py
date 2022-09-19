@@ -4,6 +4,15 @@ from pathlib import Path
 import os
 import glob
 
+def removeWaste():
+    files = glob.glob('saved/*')
+    for f in files:
+        os.remove(f)
+
+    open('server_state.txt', 'w').close()
+    open('client_output.txt', 'w').close()
+
+
 # input from 1 content server matches output from one client
 def basics():
     server = Popen(["java", "AggregationServer"]) 
@@ -37,6 +46,7 @@ def basics():
             print(f"{passCount} lines passed, {failCount} lines failed, lines completed: {expectedOutputLineNum}/{len(input_contents)}")
     server.terminate()
     contentServer.terminate()
+    removeWaste()
     
 
 
@@ -102,12 +112,7 @@ def killCS():
     contentServer2.terminate()
     contentServer3.terminate()
     server.terminate()
-    files = glob.glob('saved/*')
-    for f in files:
-        os.remove(f)
-
-    open('server_state.txt', 'w').close()
-    open('client_output.txt', 'w').close()
+    removeWaste()
 
 # client tries reconnecting, aggregation server killed
 def failures():
@@ -131,5 +136,8 @@ def advanced():
     pass
 
 
-# basics()
-killCS()
+basics()
+
+## ordering issues need to sort in Java code (will be based on content server ordering)
+# killCS()
+# failures()
