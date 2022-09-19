@@ -111,7 +111,19 @@ def killCS():
 
 # client tries reconnecting, aggregation server killed
 def failures():
-    pass
+    server = Popen(["java", "AggregationServer"]) 
+    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
+    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
+    server.terminate()
+    run(["java", "GETClient", "AggregationServer:4567"])
+    new_server = Popen(["java", "AggregationServer"]) 
+
+    #compare output    
+
+
+
+    contentServer1.terminate()
+    new_server.terminate()
 
 
 # content server put to AS, client GET, kill AS, restart AS client does GET

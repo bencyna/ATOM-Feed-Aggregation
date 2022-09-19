@@ -51,7 +51,7 @@ public class GETClient {
             writeLC.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             if (attempts < 3) {
                 System.out.println("Connection failed, trying again...");
                 try {
