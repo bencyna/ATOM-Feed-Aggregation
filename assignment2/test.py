@@ -41,7 +41,7 @@ def basics():
 
 
 
-# 3 content servers do a put, content server 2 is killed, ensure the next get is correct
+# 3 content servers do a put, content server 1 is allowed to die, ensure the next get is correct
 def killCS():
     server = Popen(["java", "AggregationServer"]) 
     contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
@@ -107,7 +107,7 @@ def killCS():
         os.remove(f)
 
     open('server_state.txt', 'w').close()
-    # open('client_output.txt', 'w').close()
+    open('client_output.txt', 'w').close()
 
 # client tries reconnecting, aggregation server killed
 def failures():
