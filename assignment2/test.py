@@ -117,7 +117,7 @@ def killCS():
     contentServer3.terminate()
     server.terminate()
     removeWaste()
-    time.sleep()
+    time.sleep(1)
 
 # aggregation server killed
 def failures():
