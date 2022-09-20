@@ -28,14 +28,13 @@ public class GETClient {
             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
 
             String serverContentAll = "";
-            dout.writeUTF("typ: get name: client server lc:" + String.valueOf(ClientTime.get()));
+            dout.writeUTF("type: get name: client server lc:" + String.valueOf(ClientTime.get()));
             dout.flush();
             serverContentAll = din.readUTF();
-            String serverContent = serverContentAll.split("<!endline!>;")[1];
+            String[] serverContentParts = serverContentAll.split("<!endline!>;");
+            String serverContent = serverContentParts.length > 1 ? serverContentParts[1] : "";
+
             Integer ServerLamport = Integer.parseInt(serverContentAll.split("<!endline!>;")[0]);
-
-
-
 
             System.out.println("Server says: " + serverContent);
             PrintWriter writer = new PrintWriter("client_output.txt", "UTF-8");
@@ -52,7 +51,7 @@ public class GETClient {
             writeLC.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
             if (attempts < 3) {
                 System.out.println("Connection failed, trying again...");
                 try {
