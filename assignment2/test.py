@@ -47,6 +47,7 @@ def basics():
     server.terminate()
     contentServer.terminate()
     removeWaste()
+    time.sleep(1)
     
 
 
@@ -58,6 +59,7 @@ def killCS():
     for x in range(0, 10):
         print(f"Letting cs1 die... {x} seconds/10")
         time.sleep(1)
+
     contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
     time.sleep(1)
     contentServer3 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file3.txt"])
@@ -113,6 +115,7 @@ def killCS():
     contentServer3.terminate()
     server.terminate()
     removeWaste()
+    time.sleep()
 
 # aggregation server killed
 def failures():
@@ -176,6 +179,6 @@ def failures():
 
 
 basics()
-## ordering issues need to sort in Java code (will be based on content server ordering)
+# ordering issues need to sort in Java code (will be based on content server ordering)
 killCS()
 failures()
