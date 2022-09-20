@@ -16,6 +16,7 @@ def removeWaste():
 # input from 1 content server matches output from one client
 def basics():
     server = Popen(["java", "AggregationServer"]) 
+    time.sleep(1)
     contentServer = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
     time.sleep(1)
     run(["java", "GETClient", "AggregationServer:4567"])
@@ -55,6 +56,7 @@ def basics():
 # 3 content servers do a put, content server 1 is allowed to die, ensure the next get is correct
 def killCS():
     server = Popen(["java", "AggregationServer"]) 
+    time.sleep(1)
     contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
     for x in range(0, 10):
         print(f"Letting cs1 die... {x} seconds/10")
