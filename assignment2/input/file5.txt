@@ -1,0 +1,18 @@
+title:My example feed
+subtitle:for demonstration purposes
+link:www.cs.adelaide.edu.au
+updated:2015-08-07T18:30:02Z
+author:Santa Claus
+id:urn::uuid:60a76c80-d399-11d9-b93C-0003939e0af6
+entry
+title:Nick sets assignment
+link:www.cs.adelaide.edu.au/users/third/ds/
+id:urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a
+updated:2015-08-07T18:30:02Z
+summary:Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
+entry
+title:second feed entry
+link:www.cs.adelaide.edu.au/users/third/ds/14ds2s1
+id:urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6b
+updated:2015-08-07T18:29:02Z
+summary:here's another summary entry which a reader would normally use to work out if they wanted to read some more. It's quite handy.

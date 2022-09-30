@@ -22,7 +22,7 @@ java AggregationServer
 ```
 start content server
 ```
-java ContentServer
+java ContentServer AggregationServer:4567 ./input/file1.txt
 ```
 Start client
 ```

@@ -152,7 +152,7 @@ public class AggregationServer extends Thread {
         }
     }
     static String sendToClient(LamportClock AStime) {
-        // read files and return contents in string format
+        // read files and return contents in string format (parsed as valid XML)
         try {
              String content = String.valueOf(AStime.get()) + "<!endline!>;";
 
@@ -168,6 +168,7 @@ public class AggregationServer extends Thread {
                     //Read File Line By Line
                     while ((strLine = br.readLine()) != null)   {
                     // if current line doesn't have an identifyer, we remove the last endline then add this line
+                        
                         content += strLine + "\n";
                     }
                     fstream.close();
@@ -182,9 +183,11 @@ public class AggregationServer extends Thread {
     }
     static void put(String[] parts) {
         try {
+            // call StringToXML with parts and filename and it'll take care of the rest
             String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
-            PrintWriter writer = new PrintWriter("./saved/" + contentHeaderName + ".txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("./saved/" + contentHeaderName + ".xml", "iso-8859-1");
             for (int i = 1; i < parts.length; i++) {
+                //pass to xml and save
                 writer.println(parts[i]);
             }
             writer.close();
