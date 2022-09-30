@@ -195,7 +195,4 @@ public class AggregationServer extends Thread {
             System.out.println("Error");
         }
     }
-    void controlContent(String contentServerName) {
-        // reset timer to 0
-    }
 }
