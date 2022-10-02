@@ -2,13 +2,23 @@ import javax.swing.text.AbstractDocument.ElementEdit;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
+import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
+import org.xml.sax.helpers.AttributesImpl;
+
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileNotFoundException;
 
 
@@ -53,37 +63,59 @@ public class ParseXML {
             return "fail";
         }
     } 
-    public void StringToXML(String[] parts, String filePath) throws ParserConfigurationException, FileNotFoundException {
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+    public void StringToXML(String[] parts, String filePath) {
+        try {
+            BufferedReader in;
+            StreamResult out;
+            TransformerHandler th;
+            AttributesImpl atts;
 
-        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            in = new BufferedReader(new FileReader("file5.txt"));
+			out = new StreamResult("dataTest.xml");
+            
+            //
+			SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory
+				.newInstance();
 
-        Document xmlDoc = docBuilder.newDocument();
+            th = tf.newTransformerHandler();
+            Transformer serializer = th.getTransformer();
+            serializer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+            serializer.setOutputProperty(
+                    "{http://xml.apache.org/xslt}indent-amount", "4");
+            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+            th.setResult(out);
+            th.startDocument();
+            atts = new AttributesImpl();
+            th.startElement("", "", "Employee", atts);
 
-        Element rootElement = xmlDoc.createElement("feed");
-
-        Element mainElement = xmlDoc.createElement("inside1");
-
-        Text productNameText = xmlDoc.createTextNode("inside?");
-        
-        Element productName = xmlDoc.createElement("inside1");
-
-        Element name = xmlDoc.createElement("name");
-
-        productName.appendChild(productNameText);
-        mainElement.appendChild(productName);
-        rootElement.appendChild(rootElement);
-        xmlDoc.appendChild(rootElement);
-
-        File xmlFile = new File("products.xml");
-
-        FileOutputStream outStream = new FileOutputStream(xmlFile);
-
-
-
-
-        return;
+        //
+			String str;
+			while ((str = in.readLine()) != null) {
+				String[] elements = str.split(" ");
+                atts.clear();
+                th.startElement("", "", "Data", atts);
+                th.startElement("", "", "Employee_Name", atts);
+                th.characters(elements[0].toCharArray(), 0, elements[0].length());
+                th.endElement("", "", "Employee_Name");
+                th.endElement("", "", "Data");
+			}
+			in.close();
+			closeXML(th);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     } 
+
+    public void closeXML(TransformerHandler th) {
+        try {
+            th.endElement("", "", "Employee");
+            th.endDocument();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
 
     // to test xml we have a main
     public static void main(String[] args) {
