@@ -1,56 +1,24 @@
-<?xml version="1.0" encoding="ISO-8859-1"?><Employee>
-    <Data>
-        <Employee_Name>title:My</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>subtitle:for</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>link:www.cs.adelaide.edu.au</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>updated:2015-08-07T18:30:02Z</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>author:Santa</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>id:urn::uuid:60a76c80-d399-11d9-b93C-0003939e0af6</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>entry</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>title:Nick</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>link:www.cs.adelaide.edu.au/users/third/ds/</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>id:urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>updated:2015-08-07T18:30:02Z</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>summary:Lorem</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>entry</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>title:second</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>link:www.cs.adelaide.edu.au/users/third/ds/14ds2s1</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>id:urn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6b</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>updated:2015-08-07T18:29:02Z</Employee_Name>
-    </Data>
-    <Data>
-        <Employee_Name>summary:here's</Employee_Name>
-    </Data>
-</Employee>
+<?xml version="1.0" encoding="ISO-8859-1"?><feed>
+    <entry>
+        <title>My example feed</title>
+        <subtitle>for demonstration purposes</subtitle>
+        <link>www.cs.adelaide.edu.au</link>
+        <updated>2015-08-07T18</updated>
+        <author>Santa Claus</author>
+        <id>urn</id>
+    </entry>
+    <entry>
+        <title>Nick sets assignment</title>
+        <link>www.cs.adelaide.edu.au/users/third/ds/</link>
+        <id>urn</id>
+        <updated>2015-08-07T18</updated>
+        <summary>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.</summary>
+    </entry>
+    <entry>
+        <title>second feed entry</title>
+        <link>www.cs.adelaide.edu.au/users/third/ds/14ds2s1</link>
+        <id>urn</id>
+        <updated>2015-08-07T18</updated>
+        <summary>here's another summary entry which a reader would normally use to work out if they wanted to read some more. It's quite handy.</summary>
+    </entry>
+</feed>

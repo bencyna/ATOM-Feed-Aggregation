@@ -63,7 +63,7 @@ public class ParseXML {
             return "fail";
         }
     } 
-    public static void StringToXML(String filePath) {
+    public static void StringToXML(String contentServerName) {
         try {
             BufferedReader in;
             StreamResult out;
@@ -86,18 +86,30 @@ public class ParseXML {
             th.setResult(out);
             th.startDocument();
             atts = new AttributesImpl();
-            th.startElement("", "", "Employee", atts);
+            th.startElement("", "", "feed", atts);
+            th.startElement("", "", "entry", atts);
 
         //
 			String str;
 			while ((str = in.readLine()) != null) {
-				String[] elements = str.split(" ");
+				String[] elements = str.split(":");
+                // for (int k = 0; k < elements.length; k++) {
+                //     System.out.println(elements[k]);
+                //     System.out.println(k);
+                // }
+                // System.out.println("----");
+                if (str.contains("entry") && str.trim().length() < 7) {
+                    th.endElement("", "", "entry");
+                    th.startElement("", "", "entry", atts);
+                }
+                
+                if (elements.length <= 1) {
+                    continue;
+                } 
                 atts.clear();
-                th.startElement("", "", "Data", atts);
-                th.startElement("", "", "Employee_Name", atts);
-                th.characters(elements[0].toCharArray(), 0, elements[0].length());
-                th.endElement("", "", "Employee_Name");
-                th.endElement("", "", "Data");
+                th.startElement("", "", elements[0], atts);
+                th.characters(elements[1].toCharArray(), 0, elements[1].length());
+                th.endElement("", "", elements[0]);
 			}
 			in.close();
 			closeXML(th);
@@ -109,7 +121,8 @@ public class ParseXML {
 
     public static void closeXML(TransformerHandler th) {
         try {
-            th.endElement("", "", "Employee");
+            th.endElement("", "", "entry");
+            th.endElement("", "", "feed");
             th.endDocument();
         }
         catch (Exception e) {
