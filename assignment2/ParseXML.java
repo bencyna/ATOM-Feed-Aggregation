@@ -1,7 +1,5 @@
-import javax.swing.text.AbstractDocument.ElementEdit;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.sax.SAXTransformerFactory;
@@ -12,7 +10,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
 import org.xml.sax.helpers.AttributesImpl;
 
 import java.io.BufferedReader;
@@ -86,7 +83,10 @@ public class ParseXML {
             th.setResult(out);
             th.startDocument();
             atts = new AttributesImpl();
+            atts.addAttribute("1", "2", "xml:lang", "", "en-US");
+            atts.addAttribute("", "", "xmlns", "", "http://www.w3.org/2005/Atom");
             th.startElement("", "", "feed", atts);
+            atts.clear();
             th.startElement("", "", "entry", atts);
 
         //
