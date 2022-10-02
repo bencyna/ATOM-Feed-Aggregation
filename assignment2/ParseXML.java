@@ -63,14 +63,14 @@ public class ParseXML {
             return "fail";
         }
     } 
-    public void StringToXML(String[] parts, String filePath) {
+    public static void StringToXML(String filePath) {
         try {
             BufferedReader in;
             StreamResult out;
             TransformerHandler th;
             AttributesImpl atts;
 
-            in = new BufferedReader(new FileReader("file5.txt"));
+            in = new BufferedReader(new FileReader("input/file5.txt"));
 			out = new StreamResult("dataTest.xml");
             
             //
@@ -107,7 +107,7 @@ public class ParseXML {
         }
     } 
 
-    public void closeXML(TransformerHandler th) {
+    public static void closeXML(TransformerHandler th) {
         try {
             th.endElement("", "", "Employee");
             th.endDocument();
@@ -120,7 +120,8 @@ public class ParseXML {
     // to test xml we have a main
     public static void main(String[] args) {
         try {
-            XMLtoString("hello");
+            StringToXML("hello");
+            // XMLtoString("hello");
         }
         catch (Exception e){
             e.printStackTrace();
