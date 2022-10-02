@@ -4,8 +4,9 @@
         <subtitle>for demonstration purposes</subtitle>
         <link>www.cs.adelaide.edu.au</link>
         <updated>2015-08-07T18</updated>
-        <author>Santa Claus</author>
-        <id>urn</id>
+        <author>
+            <name>Santa Claus</name>
+        </author>
     </entry>
     <entry>
         <title>Nick sets assignment</title>

@@ -91,6 +91,7 @@ public class ParseXML {
 
         //
 			String str;
+            Boolean lastIsAuthor = false;
 			while ((str = in.readLine()) != null) {
 				String[] elements = str.split(":");
                 // for (int k = 0; k < elements.length; k++) {
@@ -106,10 +107,31 @@ public class ParseXML {
                 if (elements.length <= 1) {
                     continue;
                 } 
-                atts.clear();
-                th.startElement("", "", elements[0], atts);
-                th.characters(elements[1].toCharArray(), 0, elements[1].length());
-                th.endElement("", "", elements[0]);
+                if (elements[0].trim().equals("author")) {
+                    th.startElement("", "", elements[0], atts);
+                    th.startElement("", "", "name", atts);
+                    th.characters(elements[1].toCharArray(), 0, elements[1].length());
+                    th.endElement("", "", "name");
+                    lastIsAuthor = true;
+                }
+                
+                else if (elements[0].trim().equals("email") && lastIsAuthor) {
+                    th.startElement("", "", "email", atts);
+                    th.characters(elements[1].toCharArray(), 0, elements[1].length());
+                    th.endElement("", "", "email");
+                    th.endElement("", "", "author");
+                    lastIsAuthor = false;
+                }
+                else if (lastIsAuthor) {
+                    th.endElement("", "", "author");
+                    lastIsAuthor = false;
+                }
+                else {
+                    atts.clear();
+                    th.startElement("", "", elements[0], atts);
+                    th.characters(elements[1].toCharArray(), 0, elements[1].length());
+                    th.endElement("", "", elements[0]);
+                }
 			}
 			in.close();
 			closeXML(th);
