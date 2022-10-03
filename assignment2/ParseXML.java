@@ -32,12 +32,13 @@ public class ParseXML {
 
         DocumentBuilder builder = factory.newDocumentBuilder();
 
-        Document doc = builder.parse("test.xml");
+        Document doc = builder.parse("dataTest.xml");
 
-        NodeList personList = doc.getElementsByTagName("author");    
+        NodeList entryList = doc.getElementsByTagName("entry");   
+        
 
-        for (int i=0; i< personList.getLength(); i++) {
-            Node p = personList.item(i);
+        for (int i=0; i< entryList.getLength(); i++) {
+            Node p = entryList.item(i);
             if (p.getNodeType() ==Node.ELEMENT_NODE) {
                 Element person = (Element) p;
                 NodeList nameList = person.getChildNodes();
@@ -51,7 +52,7 @@ public class ParseXML {
                 }
                 
             }
-        }
+        } 
 
         return "je";
         }
