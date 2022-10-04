@@ -57,12 +57,13 @@ public class ParseXML {
                 
             }
         } 
-
+        File tempfile = new File("tempXML.xml"); 
+        tempfile.delete();
         return content;
         }
         catch (Exception e) {
             e.printStackTrace();
-            return "fail";
+            return "XML to String failed";
         }
     } 
     public String StringToXML(String filepath) {
@@ -154,14 +155,14 @@ public class ParseXML {
               result += strLine;
             }
             fstream.close();
-            File myObj = new File(tempFileName); 
-            myObj.delete();
+            File tempfile = new File(tempFileName); 
+            tempfile.delete();
 
             return result;
         }
         catch (Exception e) {
             e.printStackTrace();
-            return "fail";
+            return "String to XML failed";
         }
     } 
 
