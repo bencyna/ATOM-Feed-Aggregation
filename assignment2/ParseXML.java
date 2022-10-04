@@ -23,7 +23,7 @@ import java.io.FileNotFoundException;
 public class ParseXML {
 
 
-    public static String XMLtoString(String line) {
+    public static String XMLtoString(String filepath) {
         try {
         // String[] splitLine = line.split(":", 2);
         // String newLine = "<" + splitLine[0] + ">" + splitLine[1] + "</" + splitLine[0] + ">";
@@ -38,16 +38,16 @@ public class ParseXML {
         
 
         for (int i=0; i< entryList.getLength(); i++) {
-            Node p = entryList.item(i);
-            if (p.getNodeType() ==Node.ELEMENT_NODE) {
-                Element person = (Element) p;
-                NodeList nameList = person.getChildNodes();
-                for (int j=0; i< nameList.getLength(); j++) {
-                    Node n = nameList.item(j);
-                    if (n.getNodeType() == Node.ELEMENT_NODE) {
-                        Element name = (Element) n;
+            Node entry = entryList.item(i);
+            if (entry.getNodeType() ==Node.ELEMENT_NODE) {
+                Element feed = (Element) entry;
+                NodeList itemEntry = feed.getChildNodes();
+                for (int j=0; j < itemEntry.getLength(); j++) {
+                    Node line = itemEntry.item(j);
+                    if (line.getNodeType() == Node.ELEMENT_NODE) {
+                        Element name = (Element) line;
 
-                        System.out.println("name: " + name.getTagName() + "=" + name.getTextContent());
+                        System.out.println(name.getTagName() + ": " + name.getTextContent());
                     }
                 }
                 
