@@ -40,7 +40,7 @@ public class ParseXML {
 
         NodeList entryList = doc.getElementsByTagName("entry");   
         
-
+        String content = "";
         for (int i=0; i< entryList.getLength(); i++) {
             Node entry = entryList.item(i);
             if (entry.getNodeType() ==Node.ELEMENT_NODE) {
@@ -51,14 +51,14 @@ public class ParseXML {
                     if (line.getNodeType() == Node.ELEMENT_NODE) {
                         Element name = (Element) line;
 
-                        System.out.println(name.getTagName() + ": " + name.getTextContent());
+                        content += (name.getTagName() + ":" + name.getTextContent()) + "\n";
                     }
                 }
                 
             }
         } 
 
-        return "je";
+        return content;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -137,7 +137,7 @@ public class ParseXML {
                     atts.clear();
                     th.startElement("", "", elements[0], atts);
                     th.characters(elements[1].toCharArray(), 0, elements[1].length());
-                    th.endElement("", "", elements[0]);
+                    th.endElement("", "", elements[0] +"\n");
                 }
 			}
 			in.close();
