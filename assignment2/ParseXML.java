@@ -17,13 +17,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 
 
 public class ParseXML {
 
 
-    public String XMLtoString(String filepath) {
+    public String XMLtoString(String xml) {
         try {
         // String[] splitLine = line.split(":", 2);
         // String newLine = "<" + splitLine[0] + ">" + splitLine[1] + "</" + splitLine[0] + ">";
@@ -31,8 +32,11 @@ public class ParseXML {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
         DocumentBuilder builder = factory.newDocumentBuilder();
+        PrintWriter writer = new PrintWriter("tempXML.xml", "ISO-8859-1");
+        writer.println(xml);
+        writer.close();
 
-        Document doc = builder.parse(filepath);
+        Document doc = builder.parse("tempXML.xml");
 
         NodeList entryList = doc.getElementsByTagName("entry");   
         

@@ -36,9 +36,13 @@ public class GETClient {
 
             Integer ServerLamport = Integer.parseInt(serverContentAll.split("<!endline!>;")[0]);
 
-            System.out.println("Server says: " + serverContent);
+            // parse xml back to text
+            ParseXML xmlParser = new ParseXML();
+            String xmlParsedServerContent = xmlParser.XMLtoString(serverContent);
+
+            System.out.println("Server says: " + xmlParsedServerContent);
             PrintWriter writer = new PrintWriter("client_output.txt", "UTF-8");
-            writer.print(serverContent);
+            writer.print(xmlParsedServerContent);
             writer.close();
 
             dout.close();
