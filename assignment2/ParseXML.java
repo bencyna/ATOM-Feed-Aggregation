@@ -32,7 +32,7 @@ public class ParseXML {
 
         DocumentBuilder builder = factory.newDocumentBuilder();
 
-        Document doc = builder.parse("dataTest.xml");
+        Document doc = builder.parse(filepath);
 
         NodeList entryList = doc.getElementsByTagName("entry");   
         
@@ -61,14 +61,14 @@ public class ParseXML {
             return "fail";
         }
     } 
-    public static void StringToXML(String contentServerName) {
+    public static void StringToXML(String filepath) {
         try {
             BufferedReader in;
             StreamResult out;
             TransformerHandler th;
             AttributesImpl atts;
 
-            in = new BufferedReader(new FileReader("input/file5.txt"));
+            in = new BufferedReader(new FileReader(filepath));
 			out = new StreamResult("dataTest.xml");
             
             //
@@ -156,8 +156,8 @@ public class ParseXML {
     // to test xml we have a main
     public static void main(String[] args) {
         try {
-            // StringToXML("hello");
-            XMLtoString("hello");
+            StringToXML("input/file1.txt");
+            // XMLtoString("hello");
         }
         catch (Exception e){
             e.printStackTrace();
