@@ -15,17 +15,15 @@ import org.xml.sax.helpers.AttributesImpl;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.io.FileNotFoundException;
 
 
 
 public class ParseXML {
 
 
-    public static String XMLtoString(String filepath) {
+    public String XMLtoString(String filepath) {
         try {
         // String[] splitLine = line.split(":", 2);
         // String newLine = "<" + splitLine[0] + ">" + splitLine[1] + "</" + splitLine[0] + ">";
@@ -63,7 +61,7 @@ public class ParseXML {
             return "fail";
         }
     } 
-    public static String StringToXML(String filepath) {
+    public String StringToXML(String filepath) {
         try {
             BufferedReader in;
             StreamResult out;
@@ -141,7 +139,7 @@ public class ParseXML {
 			in.close();
 			closeXML(th);
 
-            FileInputStream fstream = new FileInputStream("temp"+filepath);
+            FileInputStream fstream = new FileInputStream(tempFileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             String strLine;
             String result = "";
@@ -152,7 +150,8 @@ public class ParseXML {
               result += strLine;
             }
             fstream.close();
-            File myObj = new File("temp"+filepath); 
+            File myObj = new File(tempFileName); 
+            myObj.delete();
 
             return result;
         }
@@ -162,7 +161,7 @@ public class ParseXML {
         }
     } 
 
-    public static void closeXML(TransformerHandler th) {
+    public void closeXML(TransformerHandler th) {
         try {
             th.endElement("", "", "entry");
             th.endElement("", "", "feed");
@@ -176,7 +175,7 @@ public class ParseXML {
     // to test xml we have a main
     public static void main(String[] args) {
         try {
-            System.out.println(StringToXML("input/file1.txt"));
+            // System.out.println(StringToXML("input/file1.txt"));
             // XMLtoString("hello");
         }
         catch (Exception e){

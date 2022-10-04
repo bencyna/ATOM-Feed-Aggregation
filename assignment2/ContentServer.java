@@ -127,16 +127,9 @@ public class ContentServer {
                 content = "1.type:put and ping 1.name:"+ this.name +"1.lc:" + String.valueOf(CStime.get()) + "<!endline!>;";
             }
 
-            FileInputStream fstream = new FileInputStream(filepath);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-            String strLine;
+            ParseXML xmlParser = new ParseXML();
+            content += xmlParser.StringToXML(filepath);
 
-            //Read File Line By Line
-            while ((strLine = br.readLine()) != null)   {
-              // if current line doesn't have an identifyer, we remove the last endline then add this line
-              content += strLine;
-            }
-            fstream.close();
             return content;
         }
         catch (IOException e) {

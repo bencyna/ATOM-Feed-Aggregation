@@ -74,7 +74,7 @@ public class ASTrackCS extends Thread {
                 this.timeLeft -= 1;
                 if (this.timeLeft <= 0) {
                     System.out.println(this.contentServerName.trim() + " dying");
-                    File contentFile = new File("./saved/"+this.contentServerName +".txt");
+                    File contentFile = new File("./saved/"+this.contentServerName +".xml");
                     contentFile.delete();
                     removeCSFromServerState();
 
