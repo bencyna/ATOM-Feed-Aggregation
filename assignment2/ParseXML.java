@@ -14,8 +14,10 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
 
 
@@ -61,7 +63,7 @@ public class ParseXML {
             return "fail";
         }
     } 
-    public static void StringToXML(String filepath) {
+    public static String StringToXML(String filepath) {
         try {
             BufferedReader in;
             StreamResult out;
@@ -69,7 +71,9 @@ public class ParseXML {
             AttributesImpl atts;
 
             in = new BufferedReader(new FileReader(filepath));
-			out = new StreamResult("dataTest.xml");
+
+            String tempFileName = "temp-" + filepath.split("/")[1].split(".txt")[0] +".xml";
+			out = new StreamResult(tempFileName);
             
             //
 			SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory
@@ -136,9 +140,25 @@ public class ParseXML {
 			}
 			in.close();
 			closeXML(th);
+
+            FileInputStream fstream = new FileInputStream("temp"+filepath);
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            String strLine;
+            String result = "";
+
+            //Read File Line By Line
+            while ((strLine = br.readLine()) != null)   {
+              // if current line doesn't have an identifyer, we remove the last endline then add this line
+              result += strLine;
+            }
+            fstream.close();
+            File myObj = new File("temp"+filepath); 
+
+            return result;
         }
         catch (Exception e) {
             e.printStackTrace();
+            return "fail";
         }
     } 
 
@@ -156,7 +176,7 @@ public class ParseXML {
     // to test xml we have a main
     public static void main(String[] args) {
         try {
-            StringToXML("input/file1.txt");
+            System.out.println(StringToXML("input/file1.txt"));
             // XMLtoString("hello");
         }
         catch (Exception e){

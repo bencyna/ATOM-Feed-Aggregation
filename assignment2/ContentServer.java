@@ -134,7 +134,7 @@ public class ContentServer {
             //Read File Line By Line
             while ((strLine = br.readLine()) != null)   {
               // if current line doesn't have an identifyer, we remove the last endline then add this line
-              content += strLine + "<!endline!>;";
+              content += strLine;
             }
             fstream.close();
             return content;
