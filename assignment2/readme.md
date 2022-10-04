@@ -14,7 +14,7 @@ Major design decision accross synchonising functions in the sorterImplementation
 ## Compile and run instructions for linux 
 compile:
 ```
-javac GETClient.java ContentServer.java AggregationServer.java ASTrackCS.java QueueContent.java
+javac GETClient.java ContentServer.java AggregationServer.java ASTrackCS.java QueueContent.java ParseXML.java
 ```
 start server
 ```

@@ -156,8 +156,8 @@ public class ParseXML {
     // to test xml we have a main
     public static void main(String[] args) {
         try {
-            StringToXML("hello");
-            // XMLtoString("hello");
+            // StringToXML("hello");
+            XMLtoString("hello");
         }
         catch (Exception e){
             e.printStackTrace();
