@@ -159,8 +159,12 @@ public class AggregationServer extends Thread {
 
             File folder = new File("./saved");
             File[] listOfFiles = folder.listFiles();
+
+            listOfFiles = sortFiles(listOfFiles);
+
             for (File file : listOfFiles) {
                 if (file.isFile()) {
+                    System.out.print("filename: " + file.getName());
                     FileInputStream fstream = new FileInputStream(file);
                     BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
                     String strLine;
@@ -197,5 +201,23 @@ public class AggregationServer extends Thread {
         catch (Exception e) {
             System.out.println("Error");
         }
+    }
+
+    private static File[] sortFiles(File[] listOfFiles) {
+        for (int i = 0; i < listOfFiles.length; i++) {
+            int fileI = Integer.parseInt(listOfFiles[i].getName().replaceAll("\\D+",""));
+            for (int j = i+1; j < listOfFiles.length; j++) {
+            int fileJ = Integer.parseInt(listOfFiles[j].getName().replaceAll("\\D+",""));
+            
+            if (fileJ < fileI) {
+                File temp = listOfFiles[i];
+                listOfFiles[i] = listOfFiles[j];
+                listOfFiles[j] = temp;
+            }
+                
+            }
+        }
+
+        return listOfFiles;
     }
 }
