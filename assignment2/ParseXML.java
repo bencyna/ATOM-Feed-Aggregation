@@ -28,14 +28,18 @@ public class ParseXML {
         try {
         // String[] splitLine = line.split(":", 2);
         // String newLine = "<" + splitLine[0] + ">" + splitLine[1] + "</" + splitLine[0] + ">";
-
+        String XMLheader = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><feed xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2005/Atom\">";    
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 
         DocumentBuilder builder = factory.newDocumentBuilder();
         PrintWriter writer = new PrintWriter("tempXML.xml", "ISO-8859-1");
-        writer.println(xml);
+        String removeHeaderFromXML = xml.replace(XMLheader, ""); 
+        String removeFeedFromXML = removeHeaderFromXML.replace("</feed>", ""); 
+        String updatedXML = XMLheader + removeFeedFromXML + "</feed>";
+        writer.println(updatedXML);
         writer.close();
-
+        
+            
         Document doc = builder.parse("tempXML.xml");
 
         NodeList entryList = doc.getElementsByTagName("entry");   
