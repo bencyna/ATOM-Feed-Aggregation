@@ -60,17 +60,17 @@ public class AggregationServer extends Thread {
                 String[] parts = content.split("<!endline!>;");
 
                 // // below is for checking if the request is an existing CS or if we can add it to the queue
-                // if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
-                //     // run the ping straight away
-                //     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
-                //     for (int i = 0; i< activeServers.length; i++) {
-                //         if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
-                //             activeServers[i].resetTimeLeft();
-                //             break;
-                //         }
-                //         // if not found then the content server has been removed and we can send an err message
-                //     }
-                // }
+                if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
+                    // run the ping straight away
+                    String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+                    for (int i = 0; i< activeServers.length; i++) {
+                        if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
+                            activeServers[i].resetTimeLeft();
+                            break;
+                        }
+                        // if not found then the content server has been removed and we can send an err message
+                    }
+                }
                 // else {
                 // QueueContent incomingRequest = new QueueContent(content);
                 // this.incomingRequests.add(incomingRequest);

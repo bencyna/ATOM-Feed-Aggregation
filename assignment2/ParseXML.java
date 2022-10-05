@@ -45,7 +45,8 @@ public class ParseXML {
         NodeList entryList = doc.getElementsByTagName("entry");   
         
         String content = "";
-        for (int i=0; i< entryList.getLength(); i++) {
+        int EntryListLength = entryList.getLength();
+        for (int i=0; i < EntryListLength; i++) {
             Node entry = entryList.item(i);
             if (entry.getNodeType() ==Node.ELEMENT_NODE) {
                 Element feed = (Element) entry;
@@ -55,10 +56,12 @@ public class ParseXML {
                     if (line.getNodeType() == Node.ELEMENT_NODE) {
                         Element name = (Element) line;
 
-                        content += (name.getTagName() + ":" + name.getTextContent()) + "\n";
+                        content += (name.getTagName().trim() + ": " + name.getTextContent()).trim() + "\n";
                     }
                 }
-                
+            if (i < EntryListLength - 1) {
+                content += "entry\n";
+            }
             }
         } 
         File tempfile = new File("tempXML.xml"); 
