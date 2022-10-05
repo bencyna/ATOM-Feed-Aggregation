@@ -56,7 +56,7 @@ public class ParseXML {
                     if (line.getNodeType() == Node.ELEMENT_NODE) {
                         Element name = (Element) line;
 
-                        content += (name.getTagName().trim() + ": " + name.getTextContent()).trim() + "\n";
+                        content += (name.getTagName().trim() + "" + name.getTextContent()).trim() + "\n";
                     }
                 }
             if (i < EntryListLength - 1) {
@@ -108,7 +108,7 @@ public class ParseXML {
 			String str;
             Boolean lastIsAuthor = false;
 			while ((str = in.readLine()) != null) {
-				String[] elements = str.split(":");
+				String[] elements = str.split(":", 2);
                 // for (int k = 0; k < elements.length; k++) {
                 //     System.out.println(elements[k]);
                 //     System.out.println(k);
@@ -140,6 +140,10 @@ public class ParseXML {
                 else if (lastIsAuthor) {
                     th.endElement("", "", "author");
                     lastIsAuthor = false;
+                    atts.clear();
+                    th.startElement("", "", elements[0], atts);
+                    th.characters(elements[1].toCharArray(), 0, elements[1].length());
+                    th.endElement("", "", elements[0] +"\n");
                 }
                 else {
                     atts.clear();
