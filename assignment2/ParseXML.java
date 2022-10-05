@@ -170,7 +170,7 @@ public class ParseXML {
         }
     } 
 
-    public void closeXML(TransformerHandler th) {
+     public void closeXML(TransformerHandler th) {
         try {
             th.endElement("", "", "entry");
             th.endElement("", "", "feed");

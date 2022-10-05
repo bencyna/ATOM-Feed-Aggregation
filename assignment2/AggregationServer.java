@@ -1,5 +1,7 @@
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.PriorityQueue;
 
 public class AggregationServer extends Thread {
@@ -8,6 +10,7 @@ public class AggregationServer extends Thread {
     private String[] args;
     private ServerSocket ss;
     PriorityQueue<QueueContent> incomingRequests = new PriorityQueue<>(20, (a,b) -> Integer.compare(a.getPriority(), b.getPriority()));
+    private int numOfEntries = 0;
 
     public AggregationServer(String[] args) {
         this.args = args;
@@ -56,21 +59,22 @@ public class AggregationServer extends Thread {
 
                 String[] parts = content.split("<!endline!>;");
 
-                if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
-                    // run the ping straight away
-                    String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
-                    for (int i = 0; i< activeServers.length; i++) {
-                        if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
-                            activeServers[i].resetTimeLeft();
-                            break;
-                        }
-                        // if not found then the content server has been removed and we can send an err message
-                    }
-                }
-                else {
-                QueueContent incomingRequest = new QueueContent(content);
-                this.incomingRequests.add(incomingRequest);
-                }
+                // // below is for checking if the request is an existing CS or if we can add it to the queue
+                // if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
+                //     // run the ping straight away
+                //     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+                //     for (int i = 0; i< activeServers.length; i++) {
+                //         if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
+                //             activeServers[i].resetTimeLeft();
+                //             break;
+                //         }
+                //         // if not found then the content server has been removed and we can send an err message
+                //     }
+                // }
+                // else {
+                // QueueContent incomingRequest = new QueueContent(content);
+                // this.incomingRequests.add(incomingRequest);
+                // }
 
                 
                 if (parts[0].contains("content server")) {
@@ -164,20 +168,9 @@ public class AggregationServer extends Thread {
 
             for (File file : listOfFiles) {
                 if (file.isFile()) {
-                    System.out.print("filename: " + file.getName());
-                    FileInputStream fstream = new FileInputStream(file);
-                    BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-                    String strLine;
-    
-                    //Read File Line By Line
-                    while ((strLine = br.readLine()) != null)   {
-                    // if current line doesn't have an identifyer, we remove the last endline then add this line
-                        
-                        content += strLine + "\n";
-                    }
-                    fstream.close();
-                }
-            }    
+                    content += returnContentOfFile(file);
+                }    
+            }
             return content;
         }
         catch (Exception e) {
@@ -189,13 +182,28 @@ public class AggregationServer extends Thread {
         try {
             // call StringToXML with parts and filename and it'll take care of the rest
             String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+            if (!Files.exists(Paths.get("./saved/" + contentHeaderName + ".xml"))) {
             PrintWriter writer = new PrintWriter("./saved/" + contentHeaderName + ".xml", "iso-8859-1");
             for (int i = 1; i < parts.length; i++) {
                 //pass to xml and save
                 writer.println(parts[i]);
             }
             writer.close();
-            // call ping because we know the content server is active
+        }
+        else {
+            String XMLheader = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><feed xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2005/Atom\">";    
+            String content = returnContentOfFile("./saved/" + contentHeaderName + ".xml"); 
+            content = content.replace("</feed>", "");
+
+            FileWriter fw = new FileWriter("./saved/" + contentHeaderName + ".xml", false); 
+            fw.write(content);
+            for (int i = 1; i < parts.length; i++) {
+                //pass to xml and save
+                String removeHeaderFromXML = parts[i].replace(XMLheader, ""); 
+                fw.write(removeHeaderFromXML);
+            }
+            fw.close();
+        }
             
         }
         catch (Exception e) {
@@ -219,5 +227,40 @@ public class AggregationServer extends Thread {
         }
 
         return listOfFiles;
+    }
+
+    private static String  returnContentOfFile(String filepath) throws Exception {
+        // read file
+        String content = "";
+        FileInputStream fstream = new FileInputStream(filepath);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+        String strLine;
+
+        //Read File Line By Line
+        while ((strLine = br.readLine()) != null)   {
+        // if current line doesn't have an identifyer, we remove the last endline then add this line
+            
+            content += strLine + "\n";
+        }
+        fstream.close();
+        return content;
+       
+    }
+    private static String  returnContentOfFile(File filepath) throws Exception {
+        // read file
+        String content = "";
+        FileInputStream fstream = new FileInputStream(filepath);
+        BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+        String strLine;
+
+        //Read File Line By Line
+        while ((strLine = br.readLine()) != null)   {
+        // if current line doesn't have an identifyer, we remove the last endline then add this line
+            
+            content += strLine + "\n";
+        }
+        fstream.close();
+        return content;
+       
     }
 }
