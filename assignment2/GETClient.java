@@ -10,6 +10,7 @@ public class GETClient {
     /**
      * @param attempts
      */
+
     static void connect(Integer attempts, String server) {
         try {
             FileInputStream LCNum = new FileInputStream("GETClientLamportClock.txt");

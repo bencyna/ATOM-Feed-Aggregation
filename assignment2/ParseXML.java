@@ -56,7 +56,7 @@ public class ParseXML {
                     if (line.getNodeType() == Node.ELEMENT_NODE) {
                         Element name = (Element) line;
 
-                        content += (name.getTagName().trim() + "" + name.getTextContent()).trim() + "\n";
+                        content += (name.getTagName().trim() + ":" + name.getTextContent()).trim() + "\n";
                     }
                 }
             if (i < EntryListLength - 1) {
