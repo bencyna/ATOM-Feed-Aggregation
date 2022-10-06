@@ -96,7 +96,14 @@ public class ContentServer {
                 else if (line.contains("heartbeat")) {
                     Socket s2 = new Socket("localhost", port);
                     DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
+                    DataInputStream din2 = new DataInputStream(s2.getInputStream());
+                   
                     dout2.writeUTF("1.type:heartbeat <!endline!>;");  
+
+                    String serverRes = "";
+                    serverRes = din2.readUTF();
+                    System.out.println(serverRes);
+
                     dout2.flush();
                     dout2.close();  
                     s2.close();

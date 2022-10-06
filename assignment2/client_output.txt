@@ -1,34 +1,3 @@
-title Cap bang nitrogen oxide
-subtitle Learn about good things
-link deep doop doop deep
-updated Yo gabba gabba!
-summary booop!
-entry
-title Bezoz Cover
-subtitle Learn about Jeff in this cover
-link https//www.amazon.com.au
-updated Last week
-summary CEO entrepenour born in 1964 Jeffery
-entry
-titleMy example feed
-subtitlefor demonstration purposes
-linkwww.cs.adelaide.edu.au
-updated2015-08-07T18:30:02Z
-author            Santa Claus
-idurn::uuid:60a76c80-d399-11d9-b93C-0003939e0af6
-entry
-titleNick sets assignment
-linkwww.cs.adelaide.edu.au/users/third/ds/
-idurn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6a
-updated2015-08-07T18:30:02Z
-summaryLorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
-entry
-titlesecond feed entry
-linkwww.cs.adelaide.edu.au/users/third/ds/14ds2s1
-idurn:uuid:1225c695-cfb8-4ebb-aaaa-80da344efa6b
-updated2015-08-07T18:29:02Z
-summaryhere's another summary entry which a reader would normally use to work out if they wanted to read some more. It's quite handy.
-entry
 titleMy example feed
 subtitlefor demonstration purposes
 linkwww.cs.adelaide.edu.au
