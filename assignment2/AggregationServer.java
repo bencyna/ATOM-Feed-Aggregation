@@ -59,6 +59,13 @@ public class AggregationServer extends Thread {
 
                 String[] parts = content.split("<!endline!>;");
 
+
+                if (parts[0].contains("heartbeat")) {
+                    DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
+                    dout.writeUTF("Live, LC:" + String.valueOf(AStime.get()));  
+                    dout.flush();
+                }
+
                 // // below is for checking if the request is an existing CS or if we can add it to the queue
                 if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
                     // run the ping straight away

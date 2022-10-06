@@ -93,8 +93,16 @@ public class ContentServer {
                     dout2.close();  
                     s2.close();
                 }
+                else if (line.contains("heartbeat")) {
+                    Socket s2 = new Socket("localhost", port);
+                    DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
+                    dout2.writeUTF("1.type:heartbeat <!endline!>;");  
+                    dout2.flush();
+                    dout2.close();  
+                    s2.close();
+                }
                 else {
-                    System.out.println("Invalid input, either write \"ping\" to keep content server alive or provide the path for a new input text file");
+                    System.out.println("Invalid input, either write \"ping\" to keep content server alive or provide the path for a new input text file. You can also send heartbeat to request the status of the AS");
                 }
             }
             
