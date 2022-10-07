@@ -2,7 +2,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
 import java.util.PriorityQueue;
 
 public class AggregationServer extends Thread {
@@ -10,7 +9,9 @@ public class AggregationServer extends Thread {
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
     private String[] args;
     private ServerSocket ss;
-    PriorityQueue<QueueContent> incomingRequests = new PriorityQueue<>(20, (a,b) -> Integer.compare(a.getPriority(), b.getPriority()));
+
+    PriorityQueue<QueueContent> incomingRequests = new PriorityQueue<>(20,
+            (a, b) -> Integer.compare(a.getPriority(), b.getPriority()));
     private int numOfEntries = 0;
 
     public AggregationServer(String[] args) {
@@ -22,7 +23,7 @@ public class AggregationServer extends Thread {
             AggregationServer newServer = new AggregationServer(args);
             newServer.start();
         } catch (Exception e) {
-            System.out.println(e); 
+            System.out.println(e);
         }
     }
 
@@ -41,8 +42,8 @@ public class AggregationServer extends Thread {
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             String pastCS;
 
-            //Read File Line By Line
-            while ((pastCS = br.readLine()) != null)   {
+            // Read File Line By Line
+            while ((pastCS = br.readLine()) != null) {
                 ASTrackCS newContentServer = new ASTrackCS(pastCS, true);
                 newContentServer.start();
                 activeServers[nextAvailable] = newContentServer;
@@ -52,32 +53,35 @@ public class AggregationServer extends Thread {
 
             while (true) {
                 ss = new ServerSocket(server);
-                Socket s=ss.accept();  
-                DataInputStream din=new DataInputStream(s.getInputStream());  
-                
-                String content="";  
-                content=din.readUTF();  
+                Socket s = ss.accept();
+                DataInputStream din = new DataInputStream(s.getInputStream());
+
+                String content = "";
+                content = din.readUTF();
 
                 String[] parts = content.split("<!endline!>;");
-
-
-                // // below is for checking if the request is an existing CS or if we can add it to the queue
+                // // below is for checking if the request is an existing CS or if we can add it
+                // to the queue
                 if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
+                    System.out.println("active server entered");
+
                     // run the ping straight away
                     Boolean found = false;
                     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
-                    for (int i = 0; i< activeServers.length; i++) {
-                        if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
+                    for (int i = 0; i < activeServers.length; i++) {
+                        if (activeServers[i] != null
+                                && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
                             activeServers[i].resetTimeLeft();
                             found = true;
                             System.out.println("active server found");
                             break;
                         }
-                        // if not found then the content server has been removed and we can send an err message
+                        // if not found then the content server has been removed and we can send an err
+                        // message
                         if (!found) {
-                            DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                            dout.writeUTF("Error 400 - content removed");  
-                            dout.flush(); 
+                            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                            dout.writeUTF("Error 400 - content removed");
+                            dout.flush();
                             System.out.println("active server removed");
 
                         }
@@ -88,96 +92,92 @@ public class AggregationServer extends Thread {
                 // this.incomingRequests.add(incomingRequest);
                 // }
 
-                else {
-                    if (parts[0].contains("content server")) {
-                        String contentHeaderType = parts[0].split("1.")[1];
-                        String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
-                        Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
-                        AStime.Set(CSServerLC, AStime.get());
-                        
-                        if (contentHeaderType.contains("ping") && contentHeaderType.contains("put")) {
-                            put(parts);
-                            DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                            dout.writeUTF("200 ok, LC:" + String.valueOf(AStime.get()));  
-                            dout.flush(); 
-                            Boolean found = false;
+                if (parts[0].contains("content server")) {
+                    String contentHeaderType = parts[0].split("1.")[1];
+                    String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+                    Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
+                    AStime.Set(CSServerLC, AStime.get());
 
-                            for (int i = 0; i< activeServers.length; i++) {
-                                if (activeServers[i] != null && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
-                                    activeServers[i].resetTimeLeft();
-                                    found = true;
-                                    System.out.println("active server found");
-                                    break;
-                                }
-                            }
-                            if (!found) {
-                                dout.writeUTF("Error 400 - content removed");  
-                                dout.flush(); 
+                    if (contentHeaderType.contains("ping") && contentHeaderType.contains("put")) {
+                        put(parts);
+                        DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                        dout.writeUTF("200 ok, LC:" + String.valueOf(AStime.get()));
+                        dout.flush();
+                        Boolean found = false;
+
+                        for (int i = 0; i < activeServers.length; i++) {
+                            if (activeServers[i] != null && activeServers[i].getContentServerName().trim()
+                                    .equals(contentHeaderName.trim())) {
+                                activeServers[i].resetTimeLeft();
+                                found = true;
+                                System.out.println("active server found");
+                                break;
                             }
                         }
+                        if (!found) {
+                            dout.writeUTF("Error 400 - content removed");
+                            dout.flush();
+                        }
+                    }
 
-                        else if (contentHeaderType.contains("put")) {
-                            if (parts.length < 2) {
-                                DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                                dout.writeUTF("204 - no content provided, LC:" + String.valueOf(AStime.get()));  
-                                dout.flush(); 
-                            }
-                            else {
-                                while (numOfEntries >= 20) {
-                                    //find least recently used and remove it
-                                    double oldest = Double.POSITIVE_INFINITY;
-                                    int oldestIndex = 0;
+                    else if (contentHeaderType.contains("put")) {
+                        if (parts.length < 2) {
+                            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                            dout.writeUTF("204 - no content provided, LC:" + String.valueOf(AStime.get()));
+                            dout.flush();
+                        } else 
+                        {
+                            while (numOfEntries >= 20) {
+                                // find least recently used and remove it
+                                double oldest = Double.POSITIVE_INFINITY;
+                                int oldestIndex = 0;
 
-                                    for (int i = 0; i< activeServers.length; i++) {
-                                        int update = activeServers[i].getLastUpdate();
-                                        if (update < oldest) {
-                                            oldest = update;
-                                            oldestIndex = i;
-                                        }
+                                for (int i = 0; i < activeServers.length; i++) {
+                                    int update = activeServers[i].getLastUpdate();
+                                    if (update < oldest) {
+                                        oldest = update;
+                                        oldestIndex = i;
+                                    }
                                     activeServers[oldestIndex].removeCSFromServerState();
                                     numOfEntries--;
                                 }
-
-
-                                // start new thread for this particular CS
-                                ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false);
-                                newContentServer.start();
-                                activeServers[nextAvailable] = newContentServer;
-
-                                int checked=0;
-                                while (activeServers[nextAvailable] != null) {
-                                    checked += 1;
-                                    if (checked > 20) {
-                                        //we know there are 20 content servers active, need to remove one
-                                    }
-                                    nextAvailable = (nextAvailable + 1) % 20;
-                                }
-                                put(parts);
-                                numOfEntries++;
-                                DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                                dout.writeUTF("201 - HTTP_CREATED, LC:" + String.valueOf(AStime.get()));  
-                                dout.flush(); 
                             }
+                            // start new thread for this particular CS
+                            ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false);
+                            newContentServer.start();
+                            activeServers[nextAvailable] = newContentServer;
+
+                            int checked = 0;
+                            while (activeServers[nextAvailable] != null) {
+                                checked += 1;
+                                if (checked > 20) {
+                                    // we know there are 20 content servers active, need to remove one
+                                }
+                                nextAvailable = (nextAvailable + 1) % 20;
+                            }
+                            put(parts);
+                            numOfEntries++;
+                            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                            dout.writeUTF("201 - HTTP_CREATED, LC:" + String.valueOf(AStime.get()));
+                            dout.flush();
+                            System.out.print(parts[0]);
                         }
-                        else {
-                            DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                            dout.writeUTF("Error 400 - not a valid request");  
-                            dout.flush(); 
-                        }
-                    }
-                    else if (parts[0].contains("client server")) {
-                        Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
-                        AStime.Set(CSServerLC, AStime.get());
-                        DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                        sendToClient(AStime);
-                        dout.writeUTF(sendToClient(AStime));  
-                        dout.flush(); 
-                    }
-                    else if (parts[0].contains("heartbeat")) {
-                        DataOutputStream dout=new DataOutputStream(s.getOutputStream());  
-                        dout.writeUTF("Live, LC:" + String.valueOf(AStime.get()));  
+                    } else {
+                        DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                        dout.writeUTF("Error 400 - not a valid request");
                         dout.flush();
                     }
+                } else if (parts[0].contains("client server")) {
+                    Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
+                    AStime.Set(CSServerLC, AStime.get());
+                    DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                    sendToClient(AStime);
+                    dout.writeUTF(sendToClient(AStime));
+                    dout.flush();
+                } else if (parts[0].contains("heartbeat")) {
+                    DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                    dout.writeUTF("Live, LC:" + String.valueOf(AStime.get()));
+                    dout.flush();
                 }
                 ss.close();
             }
@@ -188,20 +188,19 @@ public class AggregationServer extends Thread {
                 if (this.ss != null) {
                     this.ss.close();
                 }
-            }
-            catch (Exception err) {
+            } catch (Exception err) {
                 System.out.println("unable to close socket");
             }
-            
+
             AggregationServer newServer = new AggregationServer(args);
             newServer.start();
         }
     }
+
     static String sendToClient(LamportClock AStime) {
         // read files and return contents in string format (parsed as valid XML)
         try {
-             String content = String.valueOf(AStime.get()) + "<!endline!>;";
-
+            String content = String.valueOf(AStime.get()) + "<!endline!>;";
 
             File folder = new File("./saved");
             File[] listOfFiles = folder.listFiles();
@@ -211,98 +210,99 @@ public class AggregationServer extends Thread {
             for (File file : listOfFiles) {
                 if (file.isFile()) {
                     content += returnContentOfFile(file);
-                }    
+                }
             }
             return content;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("Error");
             return "Error";
         }
     }
+
     static void put(String[] parts) {
         try {
             // call StringToXML with parts and filename and it'll take care of the rest
             String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
             if (!Files.exists(Paths.get("./saved/" + contentHeaderName + ".xml"))) {
-            PrintWriter writer = new PrintWriter("./saved/" + contentHeaderName + ".xml", "iso-8859-1");
-            for (int i = 1; i < parts.length; i++) {
-                //pass to xml and save
-                writer.println(parts[i]);
-            }
-            writer.close();
-        }
-        else {
-            String XMLheader = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><feed xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2005/Atom\">";    
-            String content = returnContentOfFile("./saved/" + contentHeaderName + ".xml"); 
-            content = content.replace("</feed>", "");
+                PrintWriter writer = new PrintWriter("./saved/" + contentHeaderName + ".xml", "iso-8859-1");
+                for (int i = 1; i < parts.length; i++) {
+                    // pass to xml and save
+                    writer.println(parts[i]);
+                }
+                writer.close();
+            } else {
+                String XMLheader = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><feed xml:lang=\"en-US\" xmlns=\"http://www.w3.org/2005/Atom\">";
+                String content = returnContentOfFile("./saved/" + contentHeaderName + ".xml");
+                content = content.replace("</feed>", "");
 
-            FileWriter fw = new FileWriter("./saved/" + contentHeaderName + ".xml", false); 
-            fw.write(content);
-            for (int i = 1; i < parts.length; i++) {
-                //pass to xml and save
-                String removeHeaderFromXML = parts[i].replace(XMLheader, ""); 
-                fw.write(removeHeaderFromXML);
+                FileWriter fw = new FileWriter("./saved/" + contentHeaderName + ".xml", false);
+                fw.write(content);
+                for (int i = 1; i < parts.length; i++) {
+                    // pass to xml and save
+                    String removeHeaderFromXML = parts[i].replace(XMLheader, "");
+                    fw.write(removeHeaderFromXML);
+                }
+                fw.close();
             }
-            fw.close();
-        }
-            
-        }
-        catch (Exception e) {
+
+        } catch (Exception e) {
             System.out.println("Error");
         }
     }
 
     private static File[] sortFiles(File[] listOfFiles) {
         for (int i = 0; i < listOfFiles.length; i++) {
-            int fileI = Integer.parseInt(listOfFiles[i].getName().replaceAll("\\D+",""));
-            for (int j = i+1; j < listOfFiles.length; j++) {
-            int fileJ = Integer.parseInt(listOfFiles[j].getName().replaceAll("\\D+",""));
-            
-            if (fileJ < fileI) {
-                File temp = listOfFiles[i];
-                listOfFiles[i] = listOfFiles[j];
-                listOfFiles[j] = temp;
-            }
-                
+            int fileI = Integer.parseInt(listOfFiles[i].getName().replaceAll("\\D+", ""));
+            for (int j = i + 1; j < listOfFiles.length; j++) {
+                int fileJ = Integer.parseInt(listOfFiles[j].getName().replaceAll("\\D+", ""));
+
+                if (fileJ < fileI) {
+                    File temp = listOfFiles[i];
+                    listOfFiles[i] = listOfFiles[j];
+                    listOfFiles[j] = temp;
+                }
+
             }
         }
 
         return listOfFiles;
     }
 
-    private static String  returnContentOfFile(String filepath) throws Exception {
+    private static String returnContentOfFile(String filepath) throws Exception {
         // read file
         String content = "";
         FileInputStream fstream = new FileInputStream(filepath);
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
         String strLine;
 
-        //Read File Line By Line
-        while ((strLine = br.readLine()) != null)   {
-        // if current line doesn't have an identifyer, we remove the last endline then add this line
-            
+        // Read File Line By Line
+        while ((strLine = br.readLine()) != null) {
+            // if current line doesn't have an identifyer, we remove the last endline then
+            // add this line
+
             content += strLine + "\n";
         }
         fstream.close();
         return content;
-       
+
     }
-    private static String  returnContentOfFile(File filepath) throws Exception {
+
+    private static String returnContentOfFile(File filepath) throws Exception {
         // read file
         String content = "";
         FileInputStream fstream = new FileInputStream(filepath);
         BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
         String strLine;
 
-        //Read File Line By Line
-        while ((strLine = br.readLine()) != null)   {
-        // if current line doesn't have an identifyer, we remove the last endline then add this line
-            
+        // Read File Line By Line
+        while ((strLine = br.readLine()) != null) {
+            // if current line doesn't have an identifyer, we remove the last endline then
+            // add this line
+
             content += strLine + "\n";
         }
         fstream.close();
         return content;
-       
+
     }
 }
