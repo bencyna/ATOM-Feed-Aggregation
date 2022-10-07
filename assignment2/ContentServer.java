@@ -79,8 +79,8 @@ public class ContentServer extends Thread {
                     System.out.println(serverRes);
 
                     if (serverRes.contains("content removed")) {
+                        Thread.sleep(500);
                         s2.close();
-                        return;
                     }
                     
                     Integer ServerLamport = Integer.parseInt(serverRes.split("LC:")[1]);

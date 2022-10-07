@@ -34,6 +34,10 @@ public class ASTrackCS extends Thread {
         return this.lastUpdated;
     }
 
+    public void setLastUpdate(int lc) {
+        this.lastUpdated = lc;
+    }
+
     public void resetTimeLeft() {
         this.timeLeft = 12;
     }

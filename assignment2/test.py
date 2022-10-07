@@ -179,8 +179,9 @@ def failures():
     new_server.terminate()
     removeWaste()
 
+def maxContentServers():
+    pass
 
 basics()
-# ordering issues need to sort in Java code (will be based on content server ordering)
 killCS()
 failures()

@@ -63,8 +63,7 @@ public class AggregationServer extends Thread {
                 // // below is for checking if the request is an existing CS or if we can add it
                 // to the queue
                 if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
-                    System.out.println("active server entered");
-
+                    System.out.println("ping");
                     // run the ping straight away
                     Boolean found = false;
                     String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
@@ -73,111 +72,117 @@ public class AggregationServer extends Thread {
                                 && activeServers[i].getContentServerName().trim().equals(contentHeaderName.trim())) {
                             activeServers[i].resetTimeLeft();
                             found = true;
-                            System.out.println("active server found");
                             break;
                         }
-                        // if not found then the content server has been removed and we can send an err
-                        // message
-                        if (!found) {
-                            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-                            dout.writeUTF("Error 400 - content removed");
-                            dout.flush();
-                            System.out.println("active server removed");
+                    }
+                     // if not found then the content server has been removed and we can send an err message
+                     if (!found) {
+                        DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                        dout.writeUTF("Error 400 - content removed");
+                        dout.flush();
+                    }
+                    else {
+                        DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                        dout.writeUTF("ok 200");
+                        dout.flush();
 
-                        }
                     }
                 }
                 // else if ("idk") {
                 // QueueContent incomingRequest = new QueueContent(content);
                 // this.incomingRequests.add(incomingRequest);
                 // }
+                else {
+                    if (parts[0].contains("content server")) {
+                        String contentHeaderType = parts[0].split("1.")[1];
+                        String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
+                        Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
+                        AStime.Set(CSServerLC, AStime.get());
 
-                if (parts[0].contains("content server")) {
-                    String contentHeaderType = parts[0].split("1.")[1];
-                    String contentHeaderName = parts[0].split("1.lc")[0].split("name:")[1];
-                    Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
-                    AStime.Set(CSServerLC, AStime.get());
-
-                    if (contentHeaderType.contains("ping") && contentHeaderType.contains("put")) {
-                        put(parts);
-                        DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-                        dout.writeUTF("200 ok, LC:" + String.valueOf(AStime.get()));
-                        dout.flush();
-                        Boolean found = false;
-
-                        for (int i = 0; i < activeServers.length; i++) {
-                            if (activeServers[i] != null && activeServers[i].getContentServerName().trim()
-                                    .equals(contentHeaderName.trim())) {
-                                activeServers[i].resetTimeLeft();
-                                found = true;
-                                System.out.println("active server found");
-                                break;
-                            }
-                        }
-                        if (!found) {
-                            dout.writeUTF("Error 400 - content removed");
-                            dout.flush();
-                        }
-                    }
-
-                    else if (contentHeaderType.contains("put")) {
-                        if (parts.length < 2) {
-                            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-                            dout.writeUTF("204 - no content provided, LC:" + String.valueOf(AStime.get()));
-                            dout.flush();
-                        } else 
-                        {
-                            while (numOfEntries >= 20) {
-                                // find least recently used and remove it
-                                double oldest = Double.POSITIVE_INFINITY;
-                                int oldestIndex = 0;
-
-                                for (int i = 0; i < activeServers.length; i++) {
-                                    int update = activeServers[i].getLastUpdate();
-                                    if (update < oldest) {
-                                        oldest = update;
-                                        oldestIndex = i;
-                                    }
-                                    activeServers[oldestIndex].removeCSFromServerState();
-                                    numOfEntries--;
-                                }
-                            }
-                            // start new thread for this particular CS
-                            ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false);
-                            newContentServer.start();
-                            activeServers[nextAvailable] = newContentServer;
-
-                            int checked = 0;
-                            while (activeServers[nextAvailable] != null) {
-                                checked += 1;
-                                if (checked > 20) {
-                                    // we know there are 20 content servers active, need to remove one
-                                }
-                                nextAvailable = (nextAvailable + 1) % 20;
-                            }
+                        if (contentHeaderType.contains("ping") && contentHeaderType.contains("put")) {
                             put(parts);
-                            numOfEntries++;
                             DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-                            dout.writeUTF("201 - HTTP_CREATED, LC:" + String.valueOf(AStime.get()));
+                            dout.writeUTF("200 ok, LC:" + String.valueOf(AStime.get()));
                             dout.flush();
-                            System.out.print(parts[0]);
+                            Boolean found = false;
+
+                            for (int i = 0; i < activeServers.length; i++) {
+                                if (activeServers[i] != null && activeServers[i].getContentServerName().trim()
+                                        .equals(contentHeaderName.trim())) {
+                                    activeServers[i].resetTimeLeft();
+                                    activeServers[i].setLastUpdate(AStime.get());
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found) {
+                                dout.writeUTF("Error 400 - content removed");
+                                dout.flush();
+                            }
+                            else {
+                                dout.writeUTF("ok 200");
+                                dout.flush();
+                            }
                         }
-                    } else {
+
+                        else if (contentHeaderType.contains("put")) {
+                            if (parts.length < 2) {
+                                DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                                dout.writeUTF("204 - no content provided, LC:" + String.valueOf(AStime.get()));
+                                dout.flush();
+                            } else 
+                            {
+                                while (numOfEntries >= 20) {
+                                    // find least recently used and remove it
+                                    double oldest = Double.POSITIVE_INFINITY;
+                                    int oldestIndex = 0;
+
+                                    for (int i = 0; i < activeServers.length; i++) {
+                                        int update = activeServers[i].getLastUpdate();
+                                        if (update < oldest) {
+                                            oldest = update;
+                                            oldestIndex = i;
+                                        }
+                                        activeServers[oldestIndex].removeCSFromServerState();
+                                        numOfEntries--;
+                                    }
+                                }
+                                // start new thread for this particular CS
+                                ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false);
+                                newContentServer.start();
+                                activeServers[nextAvailable] = newContentServer;
+
+                                int checked = 0;
+                                while (activeServers[nextAvailable] != null) {
+                                    checked += 1;
+                                    if (checked > 20) {
+                                        // we know there are 20 content servers active, need to remove one
+                                    }
+                                    nextAvailable = (nextAvailable + 1) % 20;
+                                }
+                                put(parts);
+                                numOfEntries++;
+                                DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                                dout.writeUTF("201 - HTTP_CREATED, LC:" + String.valueOf(AStime.get()));
+                                dout.flush();
+                            }
+                        } else {
+                            DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                            dout.writeUTF("Error 400 - not a valid request");
+                            dout.flush();
+                        }
+                    } else if (parts[0].contains("client server")) {
+                        Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
+                        AStime.Set(CSServerLC, AStime.get());
                         DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-                        dout.writeUTF("Error 400 - not a valid request");
+                        sendToClient(AStime);
+                        dout.writeUTF(sendToClient(AStime));
+                        dout.flush();
+                    } else if (parts[0].contains("heartbeat")) {
+                        DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+                        dout.writeUTF("Live, LC:" + String.valueOf(AStime.get()));
                         dout.flush();
                     }
-                } else if (parts[0].contains("client server")) {
-                    Integer CSServerLC = Integer.parseInt(parts[0].split("lc:")[1]);
-                    AStime.Set(CSServerLC, AStime.get());
-                    DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-                    sendToClient(AStime);
-                    dout.writeUTF(sendToClient(AStime));
-                    dout.flush();
-                } else if (parts[0].contains("heartbeat")) {
-                    DataOutputStream dout = new DataOutputStream(s.getOutputStream());
-                    dout.writeUTF("Live, LC:" + String.valueOf(AStime.get()));
-                    dout.flush();
                 }
                 ss.close();
             }
