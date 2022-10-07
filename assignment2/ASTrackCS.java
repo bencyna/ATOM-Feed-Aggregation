@@ -8,6 +8,7 @@ import java.io.Writer;
 public class ASTrackCS extends Thread {
     private String contentServerName;
     private int timeLeft;
+    private int lastUpdated;
 
     public ASTrackCS(String contentServerName, boolean reopen) {
         try {
@@ -29,6 +30,10 @@ public class ASTrackCS extends Thread {
         return this.contentServerName;
     }
 
+    public int getLastUpdate() {
+        return this.lastUpdated;
+    }
+
     public void resetTimeLeft() {
         this.timeLeft = 12;
     }
@@ -39,7 +44,7 @@ public class ASTrackCS extends Thread {
         }
     }
 
-    private void removeCSFromServerState() {
+    public void removeCSFromServerState() {
         try {
             File inputFile = new File("server_state.txt");
             File tempFile = new File("myTempFile.txt");

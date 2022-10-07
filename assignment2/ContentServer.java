@@ -9,7 +9,7 @@ import java.io.PrintWriter;
 
 
 import java.net.*;
-public class ContentServer {
+public class ContentServer extends Thread {
     private String name;
 
     public static void main(String[] args) {
@@ -77,6 +77,11 @@ public class ContentServer {
                     String serverRes = "";
                     serverRes = din2.readUTF();
                     System.out.println(serverRes);
+
+                    if (serverRes.contains("content removed")) {
+                        s2.close();
+                        return;
+                    }
                     
                     Integer ServerLamport = Integer.parseInt(serverRes.split("LC:")[1]);
                     dout2.flush();
@@ -87,9 +92,19 @@ public class ContentServer {
                 }
                 else if (line.contains("ping")) {
                     Socket s2 = new Socket("localhost", port);
+                    DataInputStream din2 = new DataInputStream(s2.getInputStream());
                     DataOutputStream dout2=new DataOutputStream(s2.getOutputStream());  
                     dout2.writeUTF("1.type:ping 1.name:"+ this.name +" 1.lc:" + String.valueOf(CStime.get()) + "<!endline!>;");  
                     dout2.flush();
+
+                    String serverRes = "";
+                    serverRes = din2.readUTF();
+                    System.out.println(serverRes);
+
+                    if (serverRes.contains("content removed")) {
+                        s2.close();
+                        return;
+                    }
                     dout2.close();  
                     s2.close();
                 }
