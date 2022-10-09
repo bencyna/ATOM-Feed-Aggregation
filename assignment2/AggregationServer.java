@@ -158,6 +158,8 @@ public class AggregationServer extends Thread {
                                         }
                                     }
                                     System.out.print("oldest being removed: "+ oldestIndex);
+                                    File contentFile = new File("./saved/" +activeServers[oldestIndex].getContentServerName() +".xml");
+                                    activeServers[oldestIndex].deleteFile(contentFile);
                                     activeServers[oldestIndex].removeCSFromServerState();
                                     activeServers[oldestIndex] = null;
                                     this.nextAvailable = oldestIndex;

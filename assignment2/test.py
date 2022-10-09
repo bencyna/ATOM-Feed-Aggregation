@@ -195,7 +195,7 @@ def maxContentServers():
         contentServers.append(Popen(["java", "ContentServer", "AggregationServer:4567", f"./input/file{x}.txt"]))
         time.sleep(.5)
     
-    # run(["java", "GETClient", "AggregationServer:4567"])
+    run(["java", "GETClient", "AggregationServer:4567"])
     time.sleep(.5)
 
     for CServer in contentServers:

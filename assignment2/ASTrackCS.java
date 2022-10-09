@@ -81,6 +81,10 @@ public class ASTrackCS extends Thread {
         }
     }
 
+    public void deleteFile(File contentFile){
+        contentFile.delete();
+    }
+
     @Override
     public void run() {
         // keeping track of content server counters
@@ -91,7 +95,7 @@ public class ASTrackCS extends Thread {
                 if (this.timeLeft <= 0) {
                     System.out.println(this.contentServerName.trim() + " dying");
                     File contentFile = new File("./saved/"+this.contentServerName +".xml");
-                    contentFile.delete();
+                    deleteFile(contentFile);
                     removeCSFromServerState();
 
                     return;
