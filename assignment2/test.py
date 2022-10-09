@@ -1,3 +1,4 @@
+from curses import echo
 from subprocess import run, Popen
 import time
 from pathlib import Path
@@ -35,6 +36,9 @@ def basics():
                     break
 
                 if len(str(output_contents).strip()) > 0:
+                    if output_contents[expectedOutputLineNum].strip() == "entry":
+                                expectedOutputLineNum += 1
+                    
                     if output_contents[expectedOutputLineNum].strip() == line.strip():
                         print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
                         passCount += 1
@@ -86,11 +90,14 @@ def killCS():
                             break
 
                         if len(str(output_contents).strip()) > 0:
+                            if output_contents[expectedOutputLineNum].strip() == "entry":
+                                expectedOutputLineNum += 1
+                            
                             if output_contents[expectedOutputLineNum].strip() == line.strip():
                                 print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
                                 passCount += 1
                             else:
-                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed, expected {output_contents[expectedOutputLineNum]}")
                                 failCount +=1
                         
                             expectedOutputLineNum += 1
@@ -100,11 +107,14 @@ def killCS():
                             break
 
                         if len(str(output_contents).strip()) > 0:
+                            if output_contents[expectedOutputLineNum].strip() == "entry":
+                                expectedOutputLineNum += 1
+                            
                             if output_contents[expectedOutputLineNum].strip() == line.strip():
                                 print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
                                 passCount += 1
                             else:
-                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                                print(f"test {expectedOutputLineNum}: \" \n {line} \" failed, expected {output_contents[expectedOutputLineNum]}")
                                 failCount +=1
                         
                             expectedOutputLineNum += 1
@@ -131,6 +141,7 @@ def failures():
     time.sleep(1)
     new_server = Popen(["java", "AggregationServer"]) 
     run(["java", "GETClient", "AggregationServer:4567"])
+    time.sleep(.2)
 
     with open("./client_output.txt") as output:
         with open("./input/file1.txt") as input:
@@ -147,11 +158,14 @@ def failures():
                         break
 
                     if len(str(output_contents).strip()) > 0:
+                        if output_contents[expectedOutputLineNum].strip() == "entry":
+                            expectedOutputLineNum += 1
+
                         if output_contents[expectedOutputLineNum].strip() == line.strip():
                             print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
                             passCount += 1
                         else:
-                            print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                            print(f"test {expectedOutputLineNum}: \" \n {line} \" failed, expected {output_contents[expectedOutputLineNum]}")
                             failCount +=1
                     
                         expectedOutputLineNum += 1
@@ -161,11 +175,14 @@ def failures():
                         break
 
                     if len(str(output_contents).strip()) > 0:
+                        if output_contents[expectedOutputLineNum].strip() == "entry":
+                            expectedOutputLineNum += 1
+
                         if output_contents[expectedOutputLineNum].strip() == line.strip():
                             print(f"test {expectedOutputLineNum}: \" \n {line} \" passed")
                             passCount += 1
                         else:
-                            print(f"test {expectedOutputLineNum}: \" \n {line} \" failed")
+                            print(f"test {expectedOutputLineNum}: \" \n {line} \" failed, expected {output_contents[expectedOutputLineNum]}")
                             failCount +=1
                     
                         expectedOutputLineNum += 1
@@ -178,6 +195,7 @@ def failures():
     contentServer2.terminate()
     new_server.terminate()
     removeWaste()
+    time.sleep(1)
 
 # for this one, I created 16 clones of file 2
 # the test will first get file 1, and then open 20 different content servers, the aim of these tests is to 1
@@ -198,6 +216,11 @@ def maxContentServers():
     run(["java", "GETClient", "AggregationServer:4567"])
     time.sleep(.5)
 
+    for x in range(2, 23):
+        #compare files 2-22 with output, if same sucess
+        pass
+    
+
     for CServer in contentServers:
         CServer.terminate()
 
@@ -210,5 +233,5 @@ def maxContentServers():
 
 # basics()
 # killCS()
-# failures()
-maxContentServers()
+failures()
+# maxContentServers()
