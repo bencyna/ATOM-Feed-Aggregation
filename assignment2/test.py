@@ -179,9 +179,36 @@ def failures():
     new_server.terminate()
     removeWaste()
 
+# for this one, I created 16 clones of file 2
+# the test will first get file 1, and then open 20 different content servers, the aim of these tests is to 1
+# ensure the order is correct, and 2, ensure that the least recently updated has been removed
 def maxContentServers():
-    pass
+    server = Popen(["java", "AggregationServer"]) 
 
-basics()
-killCS()
-failures()
+    time.sleep(.5)
+    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
+    contentServers = [contentServer1]
+    time.sleep(.5)
+
+    for x in range(2, 23):
+        print(x)
+        contentServers.append(Popen(["java", "ContentServer", "AggregationServer:4567", f"./input/file{x}.txt"]))
+        time.sleep(.5)
+    
+    # run(["java", "GETClient", "AggregationServer:4567"])
+    time.sleep(.5)
+
+    for CServer in contentServers:
+        CServer.terminate()
+
+    server.terminate()
+    removeWaste()
+    time.sleep(1)
+
+
+
+
+# basics()
+# killCS()
+# failures()
+maxContentServers()

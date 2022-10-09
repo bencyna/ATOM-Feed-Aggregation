@@ -9,8 +9,9 @@ public class ASTrackCS extends Thread {
     private String contentServerName;
     private int timeLeft;
     private int lastUpdated;
+    private int indexInActiveServers;
 
-    public ASTrackCS(String contentServerName, boolean reopen) {
+    public ASTrackCS(String contentServerName, boolean reopen, int index) {
         try {
             if (!reopen) {
                 Writer output; 
@@ -20,6 +21,7 @@ public class ASTrackCS extends Thread {
             }
             this.contentServerName = contentServerName;
             this.timeLeft = 12;
+            this.indexInActiveServers = index;
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -36,6 +38,11 @@ public class ASTrackCS extends Thread {
 
     public void setLastUpdate(int lc) {
         this.lastUpdated = lc;
+    }
+
+   
+    public int getIndex() {
+        return this.indexInActiveServers;
     }
 
     public void resetTimeLeft() {

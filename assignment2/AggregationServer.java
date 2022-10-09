@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.PriorityQueue;
 
 public class AggregationServer extends Thread {
-    private static int nextAvailable = 0;
+    private int nextAvailable = 0;
     private static ASTrackCS[] activeServers = new ASTrackCS[20];
     private String[] args;
     private ServerSocket ss;
@@ -44,10 +44,19 @@ public class AggregationServer extends Thread {
 
             // Read File Line By Line
             while ((pastCS = br.readLine()) != null) {
-                ASTrackCS newContentServer = new ASTrackCS(pastCS, true);
+                ASTrackCS newContentServer = new ASTrackCS(pastCS, true, this.nextAvailable) ;
                 newContentServer.start();
-                activeServers[nextAvailable] = newContentServer;
-                nextAvailable = (nextAvailable + 1) % 20;
+                activeServers[this.nextAvailable] = newContentServer;
+                int i;
+                for (i = 0; i < activeServers.length; i++) {
+                    if (activeServers[this.nextAvailable] == null) {
+                        this.nextAvailable = i;
+                        break;
+                    }
+                }
+                if (i < 19) {
+                    this.nextAvailable = i+1;
+                }
             }
             fstream.close();
 
@@ -60,8 +69,10 @@ public class AggregationServer extends Thread {
                 content = din.readUTF();
 
                 String[] parts = content.split("<!endline!>;");
+
                 // // below is for checking if the request is an existing CS or if we can add it
                 // to the queue
+
                 if (parts[0].contains("ping") && parts[0].contains("content server") && !parts[0].contains("put")) {
                     System.out.println("ping");
                     // run the ping straight away
@@ -85,7 +96,6 @@ public class AggregationServer extends Thread {
                         DataOutputStream dout = new DataOutputStream(s.getOutputStream());
                         dout.writeUTF("ok 200");
                         dout.flush();
-
                     }
                 }
                 // else if ("idk") {
@@ -132,34 +142,40 @@ public class AggregationServer extends Thread {
                                 dout.flush();
                             } else 
                             {
-                                while (numOfEntries >= 20) {
-                                    // find least recently used and remove it
-                                    double oldest = Double.POSITIVE_INFINITY;
-                                    int oldestIndex = 0;
+                                double oldest = Double.POSITIVE_INFINITY;
+                                int oldestIndex = 0;
 
+                                while (numOfEntries >= 20) {
+                                    oldestIndex = 0;
+                                    oldest = Double.POSITIVE_INFINITY;
+                                    // find least recently used and remove it
                                     for (int i = 0; i < activeServers.length; i++) {
                                         int update = activeServers[i].getLastUpdate();
+
                                         if (update < oldest) {
                                             oldest = update;
                                             oldestIndex = i;
                                         }
-                                        activeServers[oldestIndex].removeCSFromServerState();
-                                        numOfEntries--;
                                     }
+                                    System.out.print("oldest being removed: "+ oldestIndex);
+                                    activeServers[oldestIndex].removeCSFromServerState();
+                                    activeServers[oldestIndex] = null;
+                                    this.nextAvailable = oldestIndex;
+                                    numOfEntries--;
                                 }
                                 // start new thread for this particular CS
-                                ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false);
+                                ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false, oldestIndex);
                                 newContentServer.start();
-                                activeServers[nextAvailable] = newContentServer;
-
-                                int checked = 0;
-                                while (activeServers[nextAvailable] != null) {
-                                    checked += 1;
-                                    if (checked > 20) {
-                                        // we know there are 20 content servers active, need to remove one
+                                activeServers[this.nextAvailable] = newContentServer;
+                           
+                                int i;
+                                for (i=0; i < activeServers.length; i++) {
+                                    if (activeServers[i] == null) {
+                                        this.nextAvailable = i;
+                                        break;
                                     }
-                                    nextAvailable = (nextAvailable + 1) % 20;
                                 }
+
                                 put(parts);
                                 numOfEntries++;
                                 DataOutputStream dout = new DataOutputStream(s.getOutputStream());
@@ -187,7 +203,7 @@ public class AggregationServer extends Thread {
                 ss.close();
             }
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             System.out.println("Restarting server...");
             try {
                 if (this.ss != null) {

@@ -129,7 +129,7 @@ public class ContentServer extends Thread {
             }
             
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
     }
 
@@ -143,7 +143,6 @@ public class ContentServer extends Thread {
                 content = "1.type:put 1.name:content server "+ num +" 1.lc:" + String.valueOf(CStime.get()) + "<!endline!>;";
 
                 this.name = "content server "+ num + " ";
-
                 int contentNumber = Integer.parseInt(num);
                 contentServerNumber.close();
 
