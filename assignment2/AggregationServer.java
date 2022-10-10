@@ -158,6 +158,8 @@ public class AggregationServer extends Thread {
                                 }
                                 // start new thread for this particular CS
                                 ASTrackCS newContentServer = new ASTrackCS(contentHeaderName, false, oldestIndex);
+                                newContentServer.setLastUpdate(AStime.get());
+
                                 newContentServer.start();
                                 activeServers[this.nextAvailable] = newContentServer;
                            

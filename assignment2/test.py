@@ -233,9 +233,12 @@ def maxContentServers():
                         break
 
                     if len(str(output_contents).strip()) > 0:
-                        if output_contents[outputLineNum].strip() == "entry":
+                        while output_contents[outputLineNum].strip() == "entry":
                             outputLineNum += 1
                         
+                        if inputLine.strip() == "entry":
+                            continue
+
                         if output_contents[outputLineNum].strip() == inputLine.strip():
                             print(f"test {outputLineNum}: \" \n {inputLine} \" passed")
                             passCount += 1
@@ -260,5 +263,5 @@ def maxContentServers():
 
 # basics()
 # killCS()
-failures()
-# maxContentServers()
+# failures()
+maxContentServers()
