@@ -16,11 +16,11 @@ def removeWaste():
 
 # input from 1 content server matches output from one client
 def basics():
-    server = Popen(["java", "AggregationServer", "4568"]) 
+    server = Popen(["java", "AggregationServer"]) 
     time.sleep(1)
-    contentServer = Popen(["java", "ContentServer", "AggregationServer:4568", "./input/file1.txt"])
+    contentServer = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
     time.sleep(1)
-    run(["java", "GETClient", "AggregationServer:4568"])
+    run(["java", "GETClient", "AggregationServer:4567"])
     print("comparing your input and output files...")
     time.sleep(1)
     with open("./client_output.txt") as output:
@@ -59,18 +59,18 @@ def basics():
 
 # 3 content servers do a put, content server 1 is allowed to die, ensure the next get is correct
 def killCS():
-    server = Popen(["java", "AggregationServer", "4568"]) 
+    server = Popen(["java", "AggregationServer"]) 
     time.sleep(1)
-    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4568", "./input/file1.txt"])
+    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
     for x in range(0, 10):
         print(f"Letting cs1 die... {x} seconds/10")
         time.sleep(1)
 
-    contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4568", "./input/file2.txt"])
+    contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
     time.sleep(1)
-    contentServer3 = Popen(["java", "ContentServer", "AggregationServer:4568", "./input/file3.txt"])
+    contentServer3 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file3.txt"])
     time.sleep(2)
-    run(["java", "GETClient", "AggregationServer:4568"])
+    run(["java", "GETClient", "AggregationServer:4567"])
     print("comparing your input and output files...")
     time.sleep(1)
     with open("./client_output.txt") as output:
@@ -131,16 +131,16 @@ def killCS():
 
 # aggregation server killed
 def failures():
-    server = Popen(["java", "AggregationServer", "4568"]) 
+    server = Popen(["java", "AggregationServer"]) 
     time.sleep(1)
-    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4568", "./input/file1.txt"])
+    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
     time.sleep(1)
-    contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4568", "./input/file2.txt"])
+    contentServer2 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file2.txt"])
     time.sleep(1)
     server.terminate()
     time.sleep(1)
-    new_server = Popen(["java", "AggregationServer", "4568"]) 
-    run(["java", "GETClient", "AggregationServer:4568"])
+    new_server = Popen(["java", "AggregationServer"]) 
+    run(["java", "GETClient", "AggregationServer:4567"])
     time.sleep(.2)
 
     with open("./client_output.txt") as output:
@@ -201,19 +201,19 @@ def failures():
 # the test will first get file 1, and then open 20 different content servers, the aim of these tests is to 1
 # ensure the order is correct, and 2, ensure that the least recently updated has been removed
 def maxContentServers():
-    server = Popen(["java", "AggregationServer", "4568"]) 
+    server = Popen(["java", "AggregationServer"]) 
 
     time.sleep(.5)
-    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4568", "./input/file1.txt"])
+    contentServer1 = Popen(["java", "ContentServer", "AggregationServer:4567", "./input/file1.txt"])
     contentServers = [contentServer1]
     time.sleep(.5)
 
     for x in range(2, 22):
         print(x)
-        contentServers.append(Popen(["java", "ContentServer", "AggregationServer:4568", f"./input/file{x}.txt"]))
+        contentServers.append(Popen(["java", "ContentServer", "AggregationServer:4567", f"./input/file{x}.txt"]))
         time.sleep(.5)
     
-    run(["java", "GETClient", "AggregationServer:4568"])
+    run(["java", "GETClient", "AggregationServer:4567"])
     time.sleep(.5)
 
 
