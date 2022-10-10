@@ -261,7 +261,7 @@ def maxContentServers():
 
 
 
-# basics()
-# killCS()
-# failures()
+basics()
+killCS()
+failures()
 maxContentServers()
