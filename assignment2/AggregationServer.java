@@ -6,7 +6,7 @@ import java.util.PriorityQueue;
 
 public class AggregationServer extends Thread {
     private int nextAvailable = 0;
-    private static ASTrackCS[] activeServers = new ASTrackCS[20];
+    private ASTrackCS[] activeServers = new ASTrackCS[20];
     private String[] args;
     private ServerSocket ss;
 
@@ -47,16 +47,7 @@ public class AggregationServer extends Thread {
                 ASTrackCS newContentServer = new ASTrackCS(pastCS, true, this.nextAvailable) ;
                 newContentServer.start();
                 activeServers[this.nextAvailable] = newContentServer;
-                int i;
-                for (i = 0; i < activeServers.length; i++) {
-                    if (activeServers[this.nextAvailable] == null) {
-                        this.nextAvailable = i;
-                        break;
-                    }
-                }
-                if (i < 19) {
-                    this.nextAvailable = i+1;
-                }
+                this.nextAvailable++;
             }
             fstream.close();
 
@@ -157,7 +148,7 @@ public class AggregationServer extends Thread {
                                             oldestIndex = i;
                                         }
                                     }
-                                    System.out.print("oldest being removed: "+ oldestIndex);
+                                    System.out.print("oldest being removed: "+ oldestIndex + " Name: " + activeServers[oldestIndex].getContentServerName());
                                     File contentFile = new File("./saved/" +activeServers[oldestIndex].getContentServerName() +".xml");
                                     activeServers[oldestIndex].deleteFile(contentFile);
                                     activeServers[oldestIndex].removeCSFromServerState();
@@ -220,23 +211,26 @@ public class AggregationServer extends Thread {
         }
     }
 
-    static String sendToClient(LamportClock AStime) {
+    String sendToClient(LamportClock AStime) {
         // read files and return contents in string format (parsed as valid XML)
         try {
             String content = String.valueOf(AStime.get()) + "<!endline!>;";
 
-            File folder = new File("./saved");
-            File[] listOfFiles = folder.listFiles();
+            ASTrackCS[] listOfServers;
 
-            listOfFiles = sortFiles(listOfFiles);
+            listOfServers = sortFiles(this.activeServers);
 
-            for (File file : listOfFiles) {
-                if (file.isFile()) {
-                    content += returnContentOfFile(file);
+            for (ASTrackCS server : listOfServers) {
+                if (server != null) {
+                    File file = new File("./saved/"+server.getContentServerName()+".xml");
+                    if (file.isFile()) {
+                        content += returnContentOfFile(file);
+                    }
                 }
             }
             return content;
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Error");
             return "Error";
         }
@@ -273,18 +267,29 @@ public class AggregationServer extends Thread {
         }
     }
 
-    private static File[] sortFiles(File[] listOfFiles) {
+    private static ASTrackCS[] sortFiles(ASTrackCS[] listOfFiles) {
         for (int i = 0; i < listOfFiles.length; i++) {
-            int fileI = Integer.parseInt(listOfFiles[i].getName().replaceAll("\\D+", ""));
-            for (int j = i + 1; j < listOfFiles.length; j++) {
-                int fileJ = Integer.parseInt(listOfFiles[j].getName().replaceAll("\\D+", ""));
+            if (listOfFiles[i] != null) {
+                int fileI =listOfFiles[i].getLastUpdate();
+                for (int j = i + 1; j < listOfFiles.length; j++) {
+                    if (listOfFiles[j] != null) {
 
-                if (fileJ < fileI) {
-                    File temp = listOfFiles[i];
-                    listOfFiles[i] = listOfFiles[j];
-                    listOfFiles[j] = temp;
+                        int fileJ =listOfFiles[j].getLastUpdate();
+
+                        if (fileJ < fileI) {
+                            ASTrackCS temp = listOfFiles[i];
+                            listOfFiles[i] = listOfFiles[j];
+                            listOfFiles[j] = temp;
+                        }
+                    }
                 }
-
+            }
+        }
+    
+        for (int i = 0; i < listOfFiles.length; i++) {
+            if (listOfFiles[i] != null) {
+                System.out.println("Name: " + listOfFiles[i].getContentServerName());
+                System.out.println("updated: " + listOfFiles[i].getLastUpdate());
             }
         }
 

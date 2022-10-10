@@ -208,7 +208,7 @@ def maxContentServers():
     contentServers = [contentServer1]
     time.sleep(.5)
 
-    for x in range(2, 23):
+    for x in range(2, 22):
         print(x)
         contentServers.append(Popen(["java", "ContentServer", "AggregationServer:4567", f"./input/file{x}.txt"]))
         time.sleep(.5)
@@ -216,10 +216,37 @@ def maxContentServers():
     run(["java", "GETClient", "AggregationServer:4567"])
     time.sleep(.5)
 
-    for x in range(2, 23):
-        #compare files 2-22 with output, if same sucess
-        pass
-    
+
+    passCount = 0
+    failCount = 0
+    outputLineNum = 0  
+    with open("./client_output.txt") as output:
+        output_contents = output.readlines()
+
+        for x in range(2, 22):
+            #compare files 2-21 with output, if same sucess
+            with open(f"./input/file{x}.txt") as inputFile:
+                inputContent = inputFile.readlines()
+
+                for inputLine in inputContent:
+                    if outputLineNum >= len(output_contents):
+                        break
+
+                    if len(str(output_contents).strip()) > 0:
+                        if output_contents[outputLineNum].strip() == "entry":
+                            outputLineNum += 1
+                        
+                        if output_contents[outputLineNum].strip() == inputLine.strip():
+                            print(f"test {outputLineNum}: \" \n {inputLine} \" passed")
+                            passCount += 1
+                        else:
+                            print(f"test {outputLineNum}: \" \n {output_contents[outputLineNum]} \" failed, expected {inputLine}")
+                            failCount +=1
+                    
+                        outputLineNum += 1
+
+    print(f"{passCount} lines passed, {failCount} lines failed, lines completed: {outputLineNum}")
+        
 
     for CServer in contentServers:
         CServer.terminate()
@@ -231,7 +258,7 @@ def maxContentServers():
 
 
 
-basics()
-killCS()
+# basics()
+# killCS()
 failures()
-maxContentServers()
+# maxContentServers()
