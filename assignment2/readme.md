@@ -1,15 +1,14 @@
 # Introduction to JAVA RMI Assignment 1 Distributed Systems s2 2022
 
 ## Overveiw
-Major design decision accross synchonising functions in the sorterImplementation. 
+Major design decision. 
 
-- When a content server sends new data to the aggregate server, it will override the old content for this server, meaning one server can only give 1 piece of information at a time
+- Heartbeat is supplied by content server, the Aggregation server will wait 12 seconds and if no response then it removes the content server
 
-## Incomplete
+- Sorting files from last updated happens when the client requests it from the server, used selection sort for simplicity 
 
-- I am yet to implement the queue functionality for requests, my initial idea was to receive requests as they come and add them to a queue. However, the one time socket that I am using means that I can't do it this way. I also thought about seperating requests in threads but again not sure how to go about setting this up. 
+- Used threads for tracking content server times
 
-- Because of above, requests arriving at the same time do not work
 
 ## Compile and run instructions for linux 
 compile:
@@ -32,7 +31,7 @@ output for client in client_output.txt
 
 
 ## Testing instructions
-make sure that the content server files in ./saved are empty/deleted and make sure client_output.txt file is also empty/deleted
+make sure that the content server files in ./saved are empty/deleted and make sure client_output.txt file is also empty/deleted. You will need to have compiled the program using the instructions above
 
 run this command 
 ```
