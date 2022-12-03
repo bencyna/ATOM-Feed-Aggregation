@@ -1,4 +1,4 @@
-# Introduction to JAVA RMI Assignment 1 Distributed Systems s2 2022
+# Assignment 2 Distributed Systems s2 2022
 
 ## Overveiw
 Major design decision. 
