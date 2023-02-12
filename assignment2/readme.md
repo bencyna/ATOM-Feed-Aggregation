@@ -30,7 +30,7 @@ Start client
 java GETClient
 ```
 output for client in client_output.txt
-
+ 
 
 ## Testing instructions
 make sure that the content server files in ./saved are empty/deleted and make sure client_output.txt file is also empty/deleted. You will need to have compiled the program using the instructions above
