@@ -1,4 +1,3 @@
-from curses import echo
 from subprocess import run, Popen
 import time
 from pathlib import Path

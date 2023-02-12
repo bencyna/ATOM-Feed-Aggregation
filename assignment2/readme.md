@@ -1,7 +1,9 @@
-# Introduction to JAVA RMI Assignment 1 Distributed Systems s2 2022
+# Introduction to JAVA RMI 
 
 ## Overveiw
-Major design decision. 
+This assignment was the second assignment for the University of Adelaide's distributed system course. The final grade I recieved for this was 100/100
+
+## Major design decision. 
 
 - Heartbeat is supplied by content server, the Aggregation server will wait 12 seconds and if no response then it removes the content server
 
