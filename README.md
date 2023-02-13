@@ -1,7 +1,7 @@
 # Introduction to JAVA RMI 
 
 ## Overveiw
-This assignment was the second assignment for the University of Adelaide's distributed system course. The general idea for this project was to gain an understanding of what is required to build a client/server system, by building a simple system that aggregates and distributes ATOM feeds
+This assignment was the second assignment for the University of Adelaide's distributed system course. The general idea for this project was to gain an understanding of what is required to build a client/server system, by building a simple system that aggregates and distributes ATOM feeds.
 The final grade I recieved for this was 100/100
 
 ## Major design decision. 
